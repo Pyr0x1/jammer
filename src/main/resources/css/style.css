@@ -1,0 +1,7 @@
+.selected:hover {
+	-fx-background-color: -fx-cell-hover-color;
+}
+
+.selected:checked {
+	-fx-background-color: -fx-accent;
+}

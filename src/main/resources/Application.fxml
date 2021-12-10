@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.layout.TilePane?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Separator?>
+<?import javafx.geometry.Insets?>
+
+<VBox xmlns:fx="http://javafx.com/fxml" 
+	  fx:id="container"
+	  fx:controller="it.pyrox.jammer.desktop.controller.MainApplicationController"
+	  spacing="10">
+	<padding>
+		<Insets top="10" bottom="10" left="10" right="10"/>
+	</padding>
+	<HBox spacing="20">
+		<TilePane fx:id="tilePane1" prefColumns="3">
+			<!-- Populated in controller initialize method -->
+		</TilePane>
+		<VBox fx:id="actionButtonsContainer" spacing="20"
+			alignment="CENTER">
+			<Button text="%button.copy" maxWidth="Infinity" />
+			<Button text="%button.copy.all" maxWidth="Infinity" />
+			<Button text="%button.delete" maxWidth="Infinity" />
+		</VBox>
+		<TilePane fx:id="tilePane2" prefColumns="3">
+			<!-- Populated in controller initialize method -->
+		</TilePane>
+	</HBox>
+	<Separator />
+	<Label text="Block description"/>
+</VBox>

@@ -1,6 +1,7 @@
 package it.pyrox.jammer.core.util;
 
 public final class Constants {
+	
 	public final static int NUM_BLOCKS = 15;
 	public final static int MEMCARD_SIZE = 131072;
 	public final static int HEADER_SIZE = 128;

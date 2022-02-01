@@ -1,6 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
+<?import javafx.scene.control.MenuBar?>
+<?import javafx.scene.control.Menu?>
+<?import javafx.scene.control.MenuItem?>
+<?import javafx.scene.control.SeparatorMenuItem?>
 <?import javafx.scene.layout.TilePane?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.image.Image?>
@@ -11,11 +15,23 @@
 
 <VBox xmlns:fx="http://javafx.com/fxml" 
 	  fx:id="container"
-	  fx:controller="it.pyrox.jammer.desktop.controller.MainApplicationController"
-	  spacing="10">
-	<padding>
-		<Insets top="10" bottom="10" left="10" right="10"/>
-	</padding>
+	  fx:controller="it.pyrox.jammer.desktop.controller.MainApplicationController">
+
+	<MenuBar>
+		<menus>
+			<Menu text="File">
+	            <items>	               
+	               <MenuItem text="%menu.load.1"/>
+	               <MenuItem text="%menu.load.2"/>
+	               <MenuItem text="%menu.save.1"/>
+	               <MenuItem text="%menu.save.2"/>	               
+	               <SeparatorMenuItem  />
+	               <MenuItem text="%menu.exit" onAction="#exit"/>
+	            </items>
+	         </Menu>
+		</menus>
+	</MenuBar>
+	
 	<HBox spacing="20">
 		<TilePane fx:id="tilePane1" prefColumns="3">
 			<!-- Populated in controller initialize method -->
@@ -30,6 +46,8 @@
 			<!-- Populated in controller initialize method -->
 		</TilePane>
 	</HBox>
+	
 	<Separator />
+	
 	<Label text="Block description"/>
 </VBox>

@@ -4,7 +4,9 @@ import java.net.URL;
 import java.util.ResourceBundle;
 
 import it.pyrox.jammer.desktop.util.Constants;
+import javafx.application.Platform;
 import javafx.css.PseudoClass;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.image.Image;
@@ -52,5 +54,10 @@ public class MainApplicationController implements Initializable {
 				}				
 			}
 		}
+	}
+	
+	@FXML
+	private void exit(final ActionEvent event) {
+		Platform.exit();
 	}
 }

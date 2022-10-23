@@ -63,7 +63,7 @@ public class MemoryCardController {
 		}
 	}
 	
-	protected static List<Block> findLinkedBlocks(MemoryCard memoryCard, int blockIndex) {
+	public static List<Block> findLinkedBlocks(MemoryCard memoryCard, int blockIndex) {
 		Block referenceBlock = memoryCard.getBlockAt(blockIndex);
 		List<Block> linkedBlockList = new ArrayList<Block>();
 		if (referenceBlock == null || 

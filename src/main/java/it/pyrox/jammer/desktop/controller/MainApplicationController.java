@@ -3,19 +3,22 @@ package it.pyrox.jammer.desktop.controller;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.net.URL;
+import java.util.List;
 import java.util.Locale;
 import java.util.ResourceBundle;
 
 import it.pyrox.jammer.core.controller.MemoryCardController;
+import it.pyrox.jammer.core.model.Block;
 import it.pyrox.jammer.core.model.MemoryCard;
 import it.pyrox.jammer.desktop.util.Constants;
 import javafx.application.Platform;
-import javafx.css.PseudoClass;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.geometry.Insets;
+import javafx.scene.Node;
+import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.image.PixelReader;
@@ -43,7 +46,12 @@ public class MainApplicationController implements Initializable {
 	@FXML
 	private TilePane tilePane2;
 	
-	private static final PseudoClass PSEUDO_CLASS_CHECKED = PseudoClass.getPseudoClass("checked");
+	@FXML
+	private Label blockDescriptionLabel;
+	
+	private MemoryCard memoryCard1;
+	
+	private MemoryCard memoryCard2;
 	
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {				
@@ -56,11 +64,7 @@ public class MainApplicationController implements Initializable {
 				for (int k = 0; k < Constants.NUM_BLOCK_COLS; k++) {
 					// default empty image
 					Image image = new Image(getClass().getResourceAsStream("/" + Constants.EMPTY_BLOCK_PNG_FILE), 32, 32, true, false);		
-					ImageView imageViewTmp = new ImageView(image);				
-					StackPane tmpPane = new StackPane();					
-					tmpPane.getChildren().add(imageViewTmp);
-					tmpPane.setPadding(new Insets(5));					
-					tilePaneTmp.getChildren().add(tmpPane);					
+					setBlockImage(tilePaneTmp, image, getLinearIndex(j, k), false);		
 				}				
 			}
 		}
@@ -84,9 +88,16 @@ public class MainApplicationController implements Initializable {
 		FileChooser.ExtensionFilter extFilter = new FileChooser.ExtensionFilter(bundle.getString("file.type.mcr"), "*.mcr");
 		fileChooser.getExtensionFilters().add(extFilter);
 		File file = fileChooser.showOpenDialog(stage);
-		MemoryCard memoryCard = null;
+		MemoryCard memoryCardTmp = null;
 		try {			
-			memoryCard = MemoryCardController.getInstance(file);
+			memoryCardTmp = MemoryCardController.getInstance(file);
+			// save open memory cards in the controller
+			if (memoryCardSlot == 1) {
+				memoryCard1 = memoryCardTmp;
+			}
+			else if (memoryCardSlot == 2) {
+				memoryCard2 = memoryCardTmp;
+			}
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -94,22 +105,14 @@ public class MainApplicationController implements Initializable {
 		for (int j = 0; j < Constants.NUM_BLOCK_ROWS; j++) {	
 			for (int k = 0; k < Constants.NUM_BLOCK_COLS; k++) {
 				// default empty image
-				Image image = new Image(getClass().getResourceAsStream("/" + Constants.EMPTY_BLOCK_PNG_FILE), 32, 32, true, false);
-				BufferedImage[] icons = memoryCard.getBlockAt(j * Constants.NUM_BLOCK_COLS + k).getIcons();
-				if (icons != null && icons.length > 0) {
-					image = getScaledAntialisedImageFromBufferedImage(icons[0], 2);
-				}					
-				ImageView imageViewTmp = new ImageView(image);				
-				StackPane tmpPane = new StackPane();
-				tmpPane.getStyleClass().add("selected");
-				tmpPane.getChildren().add(imageViewTmp);
-				tmpPane.setPadding(new Insets(5));
-				tmpPane.setOnMouseClicked(event -> {
-					Pane clickedPane = (Pane) event.getSource();
-					boolean selected = clickedPane.getPseudoClassStates().contains(PSEUDO_CLASS_CHECKED);
-					clickedPane.pseudoClassStateChanged(PSEUDO_CLASS_CHECKED, !selected);
-				});
-				tilePaneTmp.getChildren().add(tmpPane);					
+				Image defaultImage = new Image(getClass().getResourceAsStream("/" + Constants.EMPTY_BLOCK_PNG_FILE), 32, 32, true, false);
+				Image blockImage = getBlockImage(memoryCardTmp, getLinearIndex(j, k));
+				if (blockImage != null) {
+					setBlockImage(tilePaneTmp, blockImage, getLinearIndex(j, k), true);
+				}
+				else {
+					setBlockImage(tilePaneTmp, defaultImage, getLinearIndex(j, k), false);
+				}
 			}				
 		}
 	}
@@ -147,5 +150,76 @@ public class MainApplicationController implements Initializable {
             }
         }		
 		return resultImage;
+	}
+	
+	private void setBlockImage(TilePane tilePaneTmp, Image image, int index, boolean clickable) {
+		ImageView imageViewTmp = new ImageView(image);				
+		StackPane tmpPane = new StackPane();
+		tmpPane.getChildren().add(imageViewTmp);
+		tmpPane.setPadding(new Insets(5));
+		tmpPane.setId(getBlockIdFromIndex(index));
+		if (clickable) {
+			tmpPane.getStyleClass().add("selected");
+			tmpPane.setOnMouseClicked(event -> {
+				MemoryCard memoryCard = null;
+				Pane clickedPane = (Pane) event.getSource();
+				boolean selected = clickedPane.getPseudoClassStates().contains(Constants.PSEUDO_CLASS_CHECKED);
+				clickedPane.pseudoClassStateChanged(Constants.PSEUDO_CLASS_CHECKED, !selected);
+				if (clickedPane.getParent().equals(tilePane1)) {
+					memoryCard = memoryCard1;
+				}
+				else if (clickedPane.getParent().equals(tilePane2)) {
+					memoryCard = memoryCard2;
+				}
+				int clickedIndex = getBlockIndexFromPane(clickedPane);
+				// Select linked blocks
+				List<Block> blockList = MemoryCardController.findLinkedBlocks(memoryCard, clickedIndex);
+				for (Block block : blockList) {
+					Pane linkedPane = findImagePaneById(tilePaneTmp, getBlockIdFromIndex(block.getIndex()));					
+					linkedPane.pseudoClassStateChanged(Constants.PSEUDO_CLASS_CHECKED, !selected);					
+				}
+				// Update block description
+				blockDescriptionLabel.setText(blockList.get(0).getTitle());
+			});
+		}
+		tilePaneTmp.getChildren().add(tmpPane);
+	}
+	
+	private int getLinearIndex(int row, int col) {
+		return row * Constants.NUM_BLOCK_COLS + col;
+	}
+	
+	private int getBlockIndexFromPane(Pane clickedPane) {
+		String id = clickedPane.getId();
+		String[] splittedId = id.split(Constants.IMAGE_PANE_BASE_ID);
+		return Integer.parseInt(splittedId[1]);
+	}
+	
+	private String getBlockIdFromIndex(int index) {
+		return Constants.IMAGE_PANE_BASE_ID + index;
+	}
+	
+	private Pane findImagePaneById(TilePane tilePane, String id) {
+		Pane result = null;
+		for (Node node : tilePane.getChildren()) {
+			if (id.equals(((Pane) node).getId())) {
+				result = (Pane) node;
+				break;
+			}
+		}
+		return result;
+	}
+	
+	private Image getBlockImage(MemoryCard memoryCard, int index) {
+		Image result = null;
+		List<Block> blockList = MemoryCardController.findLinkedBlocks(memoryCard, index);
+		for (Block block : blockList) {
+			BufferedImage[] icons = block.getIcons();
+			if (icons != null && icons.length > 0) {
+				result = getScaledAntialisedImageFromBufferedImage(icons[0], 2);
+				break;
+			}
+		}
+		return result;
 	}
 }

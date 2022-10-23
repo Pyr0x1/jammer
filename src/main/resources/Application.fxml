@@ -49,7 +49,7 @@
 	
 	<Separator />
 	
-	<Label text="Block description">
+	<Label fx:id="blockDescriptionLabel" text="%label.block.description">
 		<padding>
 			<Insets top="5" bottom="5" left="5" right="5"/>
 		</padding>

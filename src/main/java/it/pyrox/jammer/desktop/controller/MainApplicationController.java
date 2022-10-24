@@ -24,6 +24,7 @@ import javafx.scene.image.ImageView;
 import javafx.scene.image.PixelReader;
 import javafx.scene.image.PixelWriter;
 import javafx.scene.image.WritableImage;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.TilePane;
@@ -80,14 +81,14 @@ public class MainApplicationController implements Initializable {
 		loadMemoryCard(event, 2);
 	}
 	
+	@FXML
+	private void exit(final ActionEvent event) {
+		Platform.exit();
+	}
+	
 	private void loadMemoryCard(final ActionEvent actionEvent, int memoryCardSlot) {
 		TilePane tilePaneTmp = memoryCardSlot == 1 ? tilePane1 : tilePane2;
-	    Stage stage = (Stage) tilePane1.getScene().getWindow();
-	    ResourceBundle bundle = ResourceBundle.getBundle(Constants.LOCALE_FILE, Locale.getDefault());
-		FileChooser fileChooser = new FileChooser();
-		FileChooser.ExtensionFilter extFilter = new FileChooser.ExtensionFilter(bundle.getString("file.type.mcr"), "*.mcr");
-		fileChooser.getExtensionFilters().add(extFilter);
-		File file = fileChooser.showOpenDialog(stage);
+		File file = openFileChooserDialogAndGetFile();
 		MemoryCard memoryCardTmp = null;
 		try {			
 			memoryCardTmp = MemoryCardController.getInstance(file);
@@ -102,7 +103,7 @@ public class MainApplicationController implements Initializable {
 			e.printStackTrace();
 		}
 		tilePaneTmp.getChildren().clear();
-		for (int j = 0; j < Constants.NUM_BLOCK_ROWS; j++) {	
+		for (int j = 0; j < Constants.NUM_BLOCK_ROWS; j++) {
 			for (int k = 0; k < Constants.NUM_BLOCK_COLS; k++) {
 				// default empty image
 				Image defaultImage = new Image(getClass().getResourceAsStream("/" + Constants.EMPTY_BLOCK_PNG_FILE), 32, 32, true, false);
@@ -117,41 +118,6 @@ public class MainApplicationController implements Initializable {
 		}
 	}
 	
-	@FXML
-	private void exit(final ActionEvent event) {
-		Platform.exit();
-	}
-	
-	/**
-	 * Custom method to create an Image based on a BufferedImage without antialising
-	 * when resizing. Needed because Image constructor with smooth parameter can't be used
-	 * in this case because image is not from a URL and setting the smooth parameter
-	 * in the enclosing ImageView doesn't work
-	 * 
-	 * @param bufferedImage The input image
-	 * @param scale The scale factor for the result image
-	 * @return
-	 */
-	private Image getScaledAntialisedImageFromBufferedImage(BufferedImage bufferedImage, int scale) {
-		Image imageFromSwing = SwingFXUtils.toFXImage(bufferedImage, null);
-		int width = (int) imageFromSwing.getWidth();
-		int height = (int) imageFromSwing.getHeight();
-		WritableImage resultImage = new WritableImage(width * scale, height * scale);
-		PixelReader pixelReader = imageFromSwing.getPixelReader();
-		PixelWriter pixelWriter = resultImage.getPixelWriter();
-		for (int i = 0; i < height; i++) {
-            for (int j = 0; j < width; j++) {
-                Color color = pixelReader.getColor(i, j);
-                for (int k = 0; k < scale; k++) {
-                	for (int w = 0; w < scale; w++) {                		
-                		pixelWriter.setColor(i * scale + k, j * scale + w, color);
-                	}
-                }
-            }
-        }		
-		return resultImage;
-	}
-	
 	private void setBlockImage(TilePane tilePaneTmp, Image image, int index, boolean clickable) {
 		ImageView imageViewTmp = new ImageView(image);				
 		StackPane tmpPane = new StackPane();
@@ -161,28 +127,32 @@ public class MainApplicationController implements Initializable {
 		if (clickable) {
 			tmpPane.getStyleClass().add("selected");
 			tmpPane.setOnMouseClicked(event -> {
-				MemoryCard memoryCard = null;
-				Pane clickedPane = (Pane) event.getSource();
-				boolean selected = clickedPane.getPseudoClassStates().contains(Constants.PSEUDO_CLASS_CHECKED);
-				clickedPane.pseudoClassStateChanged(Constants.PSEUDO_CLASS_CHECKED, !selected);
-				if (clickedPane.getParent().equals(tilePane1)) {
-					memoryCard = memoryCard1;
-				}
-				else if (clickedPane.getParent().equals(tilePane2)) {
-					memoryCard = memoryCard2;
-				}
-				int clickedIndex = getBlockIndexFromPane(clickedPane);
-				// Select linked blocks
-				List<Block> blockList = MemoryCardController.findLinkedBlocks(memoryCard, clickedIndex);
-				for (Block block : blockList) {
-					Pane linkedPane = findImagePaneById(tilePaneTmp, getBlockIdFromIndex(block.getIndex()));					
-					linkedPane.pseudoClassStateChanged(Constants.PSEUDO_CLASS_CHECKED, !selected);					
-				}
-				// Update block description
-				blockDescriptionLabel.setText(blockList.get(0).getTitle());
+				handleClickedImageBlock(event, tilePaneTmp);
 			});
 		}
 		tilePaneTmp.getChildren().add(tmpPane);
+	}
+	
+	private void handleClickedImageBlock(MouseEvent event, TilePane tilePaneTmp) {
+		MemoryCard memoryCard = null;
+		Pane clickedPane = (Pane) event.getSource();
+		deselectAllImageBlocks(tilePaneTmp);
+		clickedPane.pseudoClassStateChanged(Constants.PSEUDO_CLASS_CHECKED, true);
+		if (clickedPane.getParent().equals(tilePane1)) {
+			memoryCard = memoryCard1;
+		}
+		else if (clickedPane.getParent().equals(tilePane2)) {
+			memoryCard = memoryCard2;
+		}
+		int clickedIndex = getBlockIndexFromPane(clickedPane);
+		// Select linked blocks
+		List<Block> blockList = MemoryCardController.findLinkedBlocks(memoryCard, clickedIndex);
+		for (Block block : blockList) {
+			Pane linkedPane = findImagePaneById(tilePaneTmp, getBlockIdFromIndex(block.getIndex()));					
+			linkedPane.pseudoClassStateChanged(Constants.PSEUDO_CLASS_CHECKED, true);					
+		}
+		// Update block description
+		blockDescriptionLabel.setText(blockList.get(0).getTitle());
 	}
 	
 	private int getLinearIndex(int row, int col) {
@@ -221,5 +191,50 @@ public class MainApplicationController implements Initializable {
 			}
 		}
 		return result;
+	}
+	
+	private void deselectAllImageBlocks(TilePane tilePaneTmp) {
+		for (Node node : tilePaneTmp.getChildren()) {
+			node.pseudoClassStateChanged(Constants.PSEUDO_CLASS_CHECKED, false);
+		}
+	}
+	
+	private File openFileChooserDialogAndGetFile() {
+		Stage stage = (Stage) tilePane1.getScene().getWindow();
+	    ResourceBundle bundle = ResourceBundle.getBundle(Constants.LOCALE_FILE, Locale.getDefault());
+		FileChooser fileChooser = new FileChooser();
+		FileChooser.ExtensionFilter extFilter = new FileChooser.ExtensionFilter(bundle.getString("file.type.mcr"), "*.mcr");
+		fileChooser.getExtensionFilters().add(extFilter);
+		return fileChooser.showOpenDialog(stage);		
+	}
+	
+	/**
+	 * Custom method to create an Image based on a BufferedImage without antialising
+	 * when resizing. Needed because Image constructor with smooth parameter can't be used
+	 * in this case because image is not from a URL and setting the smooth parameter
+	 * in the enclosing ImageView doesn't work
+	 * 
+	 * @param bufferedImage The input image
+	 * @param scale The scale factor for the result image
+	 * @return
+	 */
+	private Image getScaledAntialisedImageFromBufferedImage(BufferedImage bufferedImage, int scale) {
+		Image imageFromSwing = SwingFXUtils.toFXImage(bufferedImage, null);
+		int width = (int) imageFromSwing.getWidth();
+		int height = (int) imageFromSwing.getHeight();
+		WritableImage resultImage = new WritableImage(width * scale, height * scale);
+		PixelReader pixelReader = imageFromSwing.getPixelReader();
+		PixelWriter pixelWriter = resultImage.getPixelWriter();
+		for (int i = 0; i < height; i++) {
+            for (int j = 0; j < width; j++) {
+                Color color = pixelReader.getColor(i, j);
+                for (int k = 0; k < scale; k++) {
+                	for (int w = 0; w < scale; w++) {                		
+                		pixelWriter.setColor(i * scale + k, j * scale + w, color);
+                	}
+                }
+            }
+        }		
+		return resultImage;
 	}
 }

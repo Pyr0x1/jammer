@@ -18,15 +18,23 @@ import javafx.embed.swing.SwingFXUtils;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.geometry.HPos;
 import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.Node;
+import javafx.scene.control.ButtonBar.ButtonData;
+import javafx.scene.control.ButtonType;
+import javafx.scene.control.Dialog;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.image.PixelReader;
 import javafx.scene.image.PixelWriter;
 import javafx.scene.image.WritableImage;
+import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.GridPane;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.TilePane;
@@ -131,7 +139,14 @@ public class MainApplicationController implements Initializable {
 		if (clickable) {
 			tmpPane.getStyleClass().add("selected");
 			tmpPane.setOnMouseClicked(event -> {
-				handleClickedImageBlock(event, tilePaneTmp);
+				if (event.getButton().equals(MouseButton.PRIMARY)) {
+		            if (event.getClickCount() == 1) {
+		            	handleSingleClickedImageBlock(event, tilePaneTmp);
+		            }
+		            else if (event.getClickCount() == 2) {
+		            	handleDoubleClickedImageBlock(event, tilePaneTmp);
+		            }
+				}
 			});
 		}
 		tilePaneTmp.getChildren().add(tmpPane);
@@ -139,7 +154,7 @@ public class MainApplicationController implements Initializable {
 		mapTmp.put(tmpPane.getId(), tmpPane);
 	}
 	
-	private void handleClickedImageBlock(MouseEvent event, TilePane tilePaneTmp) {
+	private void handleSingleClickedImageBlock(MouseEvent event, TilePane tilePaneTmp) {
 		MemoryCard memoryCard = null;
 		Pane clickedPane = (Pane) event.getSource();
 		deselectAllImageBlocks(tilePaneTmp);
@@ -159,6 +174,71 @@ public class MainApplicationController implements Initializable {
 		}
 		// Update block description
 		blockDescriptionLabel.setText(blockList.get(0).getTitle());
+	}
+	
+	private void handleDoubleClickedImageBlock(MouseEvent event, TilePane tilePaneTmp) {
+		MemoryCard memoryCard = null;
+		Pane clickedPane = (Pane) event.getSource();
+		if (clickedPane.getParent().equals(tilePane1)) {
+			memoryCard = memoryCard1;
+		}
+		else if (clickedPane.getParent().equals(tilePane2)) {
+			memoryCard = memoryCard2;
+		}
+		int clickedIndex = getBlockIndexFromPane(clickedPane);
+		List<Block> blockList = MemoryCardController.findLinkedBlocks(memoryCard, clickedIndex);
+		showSaveInfoDialog(blockList);
+	}
+	
+	private void showSaveInfoDialog(List<Block> blockList) {
+		ResourceBundle bundle = ResourceBundle.getBundle(Constants.LOCALE_FILE, Locale.getDefault());
+		Dialog<String> dialog = new Dialog<>();
+		dialog.setTitle(bundle.getString("dialog.save.info.title"));
+		dialog.setHeaderText(null);		
+		GridPane gridPane = new GridPane();
+		gridPane.setHgap(10);
+		gridPane.setVgap(5);
+		gridPane.setPadding(new Insets(10, 10, 10, 10));
+		addHeaderLabelInDialogPanelGrid(gridPane, bundle, "dialog.save.info.content.title", 0, 0);		
+		gridPane.add(new Label(blockList.get(0).getTitle().trim()), 1, 0);
+		addHeaderLabelInDialogPanelGrid(gridPane, bundle, "dialog.save.info.content.product.code", 0, 1);
+		gridPane.add(new Label(blockList.get(0).getProductCode()), 1, 1);
+		addHeaderLabelInDialogPanelGrid(gridPane, bundle, "dialog.save.info.content.identifier", 0, 2);
+		gridPane.add(new Label(blockList.get(0).getIdentifier()), 1, 2);
+		addHeaderLabelInDialogPanelGrid(gridPane, bundle, "dialog.save.info.content.region", 0, 3);
+		gridPane.add(new Label(blockList.get(0).getCountryCode()), 1, 3);
+		addHeaderLabelInDialogPanelGrid(gridPane, bundle, "dialog.save.info.content.slot", 0, 4);
+		String slots = "";
+		Integer size = 0;
+		for (Block block : blockList) {
+			slots += block.getIndex() + 1;
+			if (!block.equals(blockList.get(blockList.size() - 1))) {
+				slots += ", ";
+			}
+			size += block.getSaveSize() / 1000;
+		}
+		gridPane.add(new Label(slots), 1, 4);
+		addHeaderLabelInDialogPanelGrid(gridPane, bundle, "dialog.save.info.content.size", 0, 5);		
+		gridPane.add(new Label(size + " " + Constants.KB), 1, 5);
+		addHeaderLabelInDialogPanelGrid(gridPane, bundle, "dialog.save.info.content.icon.frames", 0, 6);		
+		gridPane.add(new Label(Integer.toString(blockList.get(0).getIcons().length)), 1, 6);
+		Image image = getScaledAntialisedImageFromBufferedImage(blockList.get(0).getIcons()[0], 4);
+		ImageView imageView = new ImageView(image);		
+		StackPane tmpPane = new StackPane();
+		tmpPane.getChildren().add(imageView);
+		HBox hBox = new HBox(10);		
+		hBox.getChildren().add(imageView);
+		hBox.getChildren().add(gridPane);
+		dialog.getDialogPane().setContent(hBox);
+		dialog.getDialogPane().getButtonTypes().add(new ButtonType(bundle.getString("dialog.save.info.button"), ButtonData.CANCEL_CLOSE));
+		dialog.showAndWait();
+	}
+	
+	private void addHeaderLabelInDialogPanelGrid(GridPane gridPane, ResourceBundle bundle, String key, int col, int row) {
+		Label label = new Label(bundle.getString(key));
+		label.setStyle("-fx-font-weight: bold;");
+		gridPane.add(label, col, row);
+		GridPane.setHalignment(label, HPos.RIGHT);		
 	}
 	
 	private int getBlockIndexFromPane(Pane clickedPane) {

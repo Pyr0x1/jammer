@@ -20,7 +20,6 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.geometry.HPos;
 import javafx.geometry.Insets;
-import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.ButtonBar.ButtonData;
 import javafx.scene.control.ButtonType;
@@ -68,6 +67,8 @@ public class MainApplicationController implements Initializable {
 	
 	private Map<String, StackPane> imagePaneMap2;
 	
+	private String lastFileChooserDirectory;
+	
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {				
 		for (int i = 0; i < 2; i++) {			
@@ -103,6 +104,9 @@ public class MainApplicationController implements Initializable {
 	private void loadMemoryCard(final ActionEvent actionEvent, int memoryCardSlot) {
 		TilePane tilePaneTmp = memoryCardSlot == 1 ? tilePane1 : tilePane2;
 		File file = openFileChooserDialogAndGetFile();
+		if (file == null) {
+			return;
+		}
 		MemoryCard memoryCardTmp = null;
 		try {			
 			memoryCardTmp = MemoryCardController.getInstance(file);
@@ -285,7 +289,14 @@ public class MainApplicationController implements Initializable {
 		FileChooser fileChooser = new FileChooser();
 		FileChooser.ExtensionFilter extFilter = new FileChooser.ExtensionFilter(bundle.getString("file.type.mcr"), "*.mcr");
 		fileChooser.getExtensionFilters().add(extFilter);
-		return fileChooser.showOpenDialog(stage);		
+		if (lastFileChooserDirectory != null) {
+			fileChooser.setInitialDirectory(new File(lastFileChooserDirectory));
+		}
+		File file = fileChooser.showOpenDialog(stage);
+		if (file != null) { 
+			lastFileChooserDirectory = file.getParent();
+		}
+		return file;
 	}
 	
 	private Map<String, StackPane> getMapFromTilePane(TilePane tilePane) {

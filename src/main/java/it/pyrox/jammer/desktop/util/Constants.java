@@ -13,6 +13,7 @@ public class Constants {
 	public static final int MIN_STAGE_HEIGHT = 280;
 	public static final int NUM_BLOCK_ROWS = 5;
 	public static final int NUM_BLOCK_COLS = 3;
+	public static final int NUM_BLOCKS = NUM_BLOCK_ROWS * NUM_BLOCK_COLS;
 	public static final PseudoClass PSEUDO_CLASS_CHECKED = PseudoClass.getPseudoClass("checked");
 	public static final String IMAGE_PANE_BASE_ID = "imagePane";
 	

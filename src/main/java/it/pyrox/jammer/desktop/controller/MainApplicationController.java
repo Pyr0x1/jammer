@@ -3,8 +3,10 @@ package it.pyrox.jammer.desktop.controller;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.net.URL;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.ResourceBundle;
 
 import it.pyrox.jammer.core.controller.MemoryCardController;
@@ -54,21 +56,25 @@ public class MainApplicationController implements Initializable {
 	
 	private MemoryCard memoryCard2;
 	
+	private Map<String, StackPane> imagePaneMap1;
+	
+	private Map<String, StackPane> imagePaneMap2;
+	
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {				
 		for (int i = 0; i < 2; i++) {			
 			TilePane tilePaneTmp = tilePane1;
+			imagePaneMap1 = new HashMap<>();
 			if (i > 0) {
-				tilePaneTmp = tilePane2;				
+				tilePaneTmp = tilePane2;
+				imagePaneMap2 = new HashMap<>();
 			}			
-			for (int j = 0; j < Constants.NUM_BLOCK_ROWS; j++) {				
-				for (int k = 0; k < Constants.NUM_BLOCK_COLS; k++) {
-					// default empty image
-					Image image = new Image(getClass().getResourceAsStream("/" + Constants.EMPTY_BLOCK_PNG_FILE), 32, 32, true, false);		
-					setBlockImage(tilePaneTmp, image, getLinearIndex(j, k), false);		
-				}				
+			for (int index = 0; index < Constants.NUM_BLOCKS; index++) {								
+				// default empty image
+				Image image = getDefaultImage();		
+				setBlockImage(tilePaneTmp, image, index, false);									
 			}
-		}
+		}				
 	}
 	
 	@FXML
@@ -103,18 +109,16 @@ public class MainApplicationController implements Initializable {
 			e.printStackTrace();
 		}
 		tilePaneTmp.getChildren().clear();
-		for (int j = 0; j < Constants.NUM_BLOCK_ROWS; j++) {
-			for (int k = 0; k < Constants.NUM_BLOCK_COLS; k++) {
-				// default empty image
-				Image defaultImage = new Image(getClass().getResourceAsStream("/" + Constants.EMPTY_BLOCK_PNG_FILE), 32, 32, true, false);
-				Image blockImage = getBlockImage(memoryCardTmp, getLinearIndex(j, k));
-				if (blockImage != null) {
-					setBlockImage(tilePaneTmp, blockImage, getLinearIndex(j, k), true);
-				}
-				else {
-					setBlockImage(tilePaneTmp, defaultImage, getLinearIndex(j, k), false);
-				}
-			}				
+		for (int index = 0; index < Constants.NUM_BLOCKS; index++) {			
+			// default empty image
+			Image defaultImage = getDefaultImage();
+			Image blockImage = getBlockImage(memoryCardTmp, index);
+			if (blockImage != null) {
+				setBlockImage(tilePaneTmp, blockImage, index, true);
+			}
+			else {
+				setBlockImage(tilePaneTmp, defaultImage, index, false);
+			}			
 		}
 	}
 	
@@ -123,7 +127,7 @@ public class MainApplicationController implements Initializable {
 		StackPane tmpPane = new StackPane();
 		tmpPane.getChildren().add(imageViewTmp);
 		tmpPane.setPadding(new Insets(5));
-		tmpPane.setId(getBlockIdFromIndex(index));
+		tmpPane.setId(getBlockIdFromIndex(tilePaneTmp, index));
 		if (clickable) {
 			tmpPane.getStyleClass().add("selected");
 			tmpPane.setOnMouseClicked(event -> {
@@ -131,6 +135,8 @@ public class MainApplicationController implements Initializable {
 			});
 		}
 		tilePaneTmp.getChildren().add(tmpPane);
+		Map<String, StackPane> mapTmp = getMapFromTilePane(tilePaneTmp);
+		mapTmp.put(tmpPane.getId(), tmpPane);
 	}
 	
 	private void handleClickedImageBlock(MouseEvent event, TilePane tilePaneTmp) {
@@ -148,15 +154,11 @@ public class MainApplicationController implements Initializable {
 		// Select linked blocks
 		List<Block> blockList = MemoryCardController.findLinkedBlocks(memoryCard, clickedIndex);
 		for (Block block : blockList) {
-			Pane linkedPane = findImagePaneById(tilePaneTmp, getBlockIdFromIndex(block.getIndex()));					
+			Pane linkedPane = findImagePaneById(tilePaneTmp, getBlockIdFromIndex(tilePaneTmp, block.getIndex()));				
 			linkedPane.pseudoClassStateChanged(Constants.PSEUDO_CLASS_CHECKED, true);					
 		}
 		// Update block description
 		blockDescriptionLabel.setText(blockList.get(0).getTitle());
-	}
-	
-	private int getLinearIndex(int row, int col) {
-		return row * Constants.NUM_BLOCK_COLS + col;
 	}
 	
 	private int getBlockIndexFromPane(Pane clickedPane) {
@@ -165,19 +167,13 @@ public class MainApplicationController implements Initializable {
 		return Integer.parseInt(splittedId[1]);
 	}
 	
-	private String getBlockIdFromIndex(int index) {
-		return Constants.IMAGE_PANE_BASE_ID + index;
+	private String getBlockIdFromIndex(TilePane tilePaneTmp, int index) {
+		return tilePaneTmp.getId() + "_" + Constants.IMAGE_PANE_BASE_ID + index;
 	}
 	
 	private Pane findImagePaneById(TilePane tilePane, String id) {
-		Pane result = null;
-		for (Node node : tilePane.getChildren()) {
-			if (id.equals(((Pane) node).getId())) {
-				result = (Pane) node;
-				break;
-			}
-		}
-		return result;
+		Map<String, StackPane> mapTmp = getMapFromTilePane(tilePane);
+		return mapTmp.get(id);		
 	}
 	
 	private Image getBlockImage(MemoryCard memoryCard, int index) {
@@ -193,6 +189,10 @@ public class MainApplicationController implements Initializable {
 		return result;
 	}
 	
+	private Image getDefaultImage() {
+		return new Image(getClass().getResourceAsStream("/" + Constants.EMPTY_BLOCK_PNG_FILE), 32, 32, true, false);
+	}
+	
 	private void deselectAllImageBlocks(TilePane tilePaneTmp) {
 		for (Node node : tilePaneTmp.getChildren()) {
 			node.pseudoClassStateChanged(Constants.PSEUDO_CLASS_CHECKED, false);
@@ -206,6 +206,17 @@ public class MainApplicationController implements Initializable {
 		FileChooser.ExtensionFilter extFilter = new FileChooser.ExtensionFilter(bundle.getString("file.type.mcr"), "*.mcr");
 		fileChooser.getExtensionFilters().add(extFilter);
 		return fileChooser.showOpenDialog(stage);		
+	}
+	
+	private Map<String, StackPane> getMapFromTilePane(TilePane tilePane) {
+		Map<String, StackPane> map = null;
+		if (tilePane1.equals(tilePane)) {
+			map = imagePaneMap1;
+		}
+		else if (tilePane2.equals(tilePane)) {
+			map = imagePaneMap2;
+		}
+		return map;
 	}
 	
 	/**

@@ -114,3 +114,6 @@ gradle-app.setting
 ## OS Specific
 .DS_Store
 Thumbs.db
+
+## Maven
+dependency-reduced-pom.xml

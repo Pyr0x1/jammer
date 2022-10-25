@@ -7,9 +7,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Optional;
 import java.util.ResourceBundle;
 
 import it.pyrox.jammer.core.controller.MemoryCardController;
+import it.pyrox.jammer.core.enums.SaveType;
 import it.pyrox.jammer.core.model.Block;
 import it.pyrox.jammer.core.model.MemoryCard;
 import it.pyrox.jammer.desktop.util.Constants;
@@ -81,7 +83,7 @@ public class MainApplicationController implements Initializable {
 			for (int index = 0; index < Constants.NUM_BLOCKS; index++) {								
 				// default empty image
 				Image image = getDefaultImage();		
-				setBlockImage(tilePaneTmp, image, index, false);									
+				setBlockImage(tilePaneTmp, image, null, index, false);									
 			}
 		}				
 	}
@@ -124,23 +126,31 @@ public class MainApplicationController implements Initializable {
 		for (int index = 0; index < Constants.NUM_BLOCKS; index++) {			
 			// default empty image
 			Image defaultImage = getDefaultImage();
-			Image blockImage = getBlockImage(memoryCardTmp, index);
+			List<Block> blockList = MemoryCardController.findLinkedBlocks(memoryCardTmp, index);
+			Image blockImage = getBlockImage(blockList, index);
 			if (blockImage != null) {
-				setBlockImage(tilePaneTmp, blockImage, index, true);
+				setBlockImage(tilePaneTmp, blockImage, blockList, index, true);
 			}
 			else {
-				setBlockImage(tilePaneTmp, defaultImage, index, false);
+				setBlockImage(tilePaneTmp, defaultImage, blockList, index, false);
 			}			
 		}
 	}
 	
-	private void setBlockImage(TilePane tilePaneTmp, Image image, int index, boolean clickable) {
+	private void setBlockImage(TilePane tilePaneTmp, Image image, List<Block> blockList, int index, boolean clickable) {
 		ImageView imageViewTmp = new ImageView(image);				
 		StackPane tmpPane = new StackPane();
 		tmpPane.getChildren().add(imageViewTmp);
 		tmpPane.setPadding(new Insets(5));
 		tmpPane.setId(getBlockIdFromIndex(tilePaneTmp, index));
 		if (clickable) {
+			Optional<Block> optionalBlock = blockList.stream().filter(e -> index == e.getIndex()).findFirst();			
+			if (optionalBlock.isPresent() &&
+				(SaveType.INITIAL_DELETED.equals(optionalBlock.get().getSaveType()) ||
+				SaveType.MIDDLE_LINK_DELETED.equals(optionalBlock.get().getSaveType()) ||
+				SaveType.END_LINK_DELETED.equals(optionalBlock.get().getSaveType()))) {
+				imageViewTmp.setOpacity(0.5);
+			}			
 			tmpPane.getStyleClass().add("selected");
 			tmpPane.setOnMouseClicked(event -> {
 				if (event.getButton().equals(MouseButton.PRIMARY)) {
@@ -260,9 +270,8 @@ public class MainApplicationController implements Initializable {
 		return mapTmp.get(id);		
 	}
 	
-	private Image getBlockImage(MemoryCard memoryCard, int index) {
-		Image result = null;
-		List<Block> blockList = MemoryCardController.findLinkedBlocks(memoryCard, index);
+	private Image getBlockImage(List<Block> blockList, int index) {
+		Image result = null;		
 		for (Block block : blockList) {
 			BufferedImage[] icons = block.getIcons();
 			if (icons != null && icons.length > 0) {

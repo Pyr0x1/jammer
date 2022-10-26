@@ -26,6 +26,6 @@ jobs:
         run: mkdir staging && cp target/jammer*.jar staging
         
       - name: Step 5 - Load package
-        uses: kittaakos/upload-artifact-as-is@v1
+        uses: kittaakos/upload-artifact-as-is@v0
         with:
           path: staging

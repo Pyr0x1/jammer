@@ -20,12 +20,4 @@ jobs:
           cache: maven
           
       - name: Step 3 - Build with Maven
-        run: mvn --batch-mode --update-snapshots package
-        
-      - name: Step 4 - Copy package in staging dir
-        run: mkdir staging && cp target/jammer*.jar staging
-        
-      - name: Step 5 - Load package
-        uses: kittaakos/upload-artifact-as-is@v0
-        with:
-          path: staging
+        run: mvn --batch-mode --update-snapshots package        

@@ -12,7 +12,7 @@ import java.util.List;
 
 import org.junit.jupiter.api.Test;
 
-import it.pyrox.jammer.core.enums.SaveType;
+import it.pyrox.jammer.core.enums.SaveTypeEnum;
 import it.pyrox.jammer.core.model.Block;
 import it.pyrox.jammer.core.model.MemoryCard;
 
@@ -80,7 +80,7 @@ public class MemoryCardControllerTest {
 		System.out.println(memoryCard);			               
 		assertNotNull(memoryCard);
 		assertNotNull(memoryCard.getBlocks());
-		assertEquals(SaveType.INITIAL, memoryCard.getBlockAt(0).getSaveType());
+		assertEquals(SaveTypeEnum.INITIAL, memoryCard.getBlockAt(0).getSaveType());
 		List<Block> result = MemoryCardController.findLinkedBlocks(memoryCard, 0);
 		assertNotNull(result);
 		assertEquals(1, result.size());
@@ -94,8 +94,8 @@ public class MemoryCardControllerTest {
 		System.out.println(memoryCard);			               
 		assertNotNull(memoryCard);
 		assertNotNull(memoryCard.getBlocks());
-		assertEquals(SaveType.INITIAL, memoryCard.getBlockAt(1).getSaveType());
-		assertEquals(SaveType.END_LINK, memoryCard.getBlockAt(2).getSaveType());
+		assertEquals(SaveTypeEnum.INITIAL, memoryCard.getBlockAt(1).getSaveType());
+		assertEquals(SaveTypeEnum.END_LINK, memoryCard.getBlockAt(2).getSaveType());
 		List<Block> result = MemoryCardController.findLinkedBlocks(memoryCard, 1);
 		assertNotNull(result);
 		assertEquals(2, result.size());
@@ -110,9 +110,9 @@ public class MemoryCardControllerTest {
 		System.out.println(memoryCard);			               
 		assertNotNull(memoryCard);
 		assertNotNull(memoryCard.getBlocks());
-		assertEquals(SaveType.INITIAL, memoryCard.getBlockAt(6).getSaveType());
-		assertEquals(SaveType.MIDDLE_LINK, memoryCard.getBlockAt(7).getSaveType());
-		assertEquals(SaveType.END_LINK, memoryCard.getBlockAt(8).getSaveType());
+		assertEquals(SaveTypeEnum.INITIAL, memoryCard.getBlockAt(6).getSaveType());
+		assertEquals(SaveTypeEnum.MIDDLE_LINK, memoryCard.getBlockAt(7).getSaveType());
+		assertEquals(SaveTypeEnum.END_LINK, memoryCard.getBlockAt(8).getSaveType());
 		List<Block> result = MemoryCardController.findLinkedBlocks(memoryCard, 7);
 		assertNotNull(result);
 		assertEquals(3, result.size());
@@ -128,9 +128,9 @@ public class MemoryCardControllerTest {
 		System.out.println(memoryCard);			               
 		assertNotNull(memoryCard);
 		assertNotNull(memoryCard.getBlocks());
-		assertEquals(SaveType.INITIAL, memoryCard.getBlockAt(6).getSaveType());
-		assertEquals(SaveType.MIDDLE_LINK, memoryCard.getBlockAt(7).getSaveType());
-		assertEquals(SaveType.END_LINK, memoryCard.getBlockAt(8).getSaveType());
+		assertEquals(SaveTypeEnum.INITIAL, memoryCard.getBlockAt(6).getSaveType());
+		assertEquals(SaveTypeEnum.MIDDLE_LINK, memoryCard.getBlockAt(7).getSaveType());
+		assertEquals(SaveTypeEnum.END_LINK, memoryCard.getBlockAt(8).getSaveType());
 		List<Block> result = MemoryCardController.findLinkedBlocks(memoryCard, 8);
 		assertNotNull(result);
 		assertEquals(3, result.size());
@@ -146,7 +146,7 @@ public class MemoryCardControllerTest {
 		System.out.println(memoryCard);			               
 		assertNotNull(memoryCard);
 		assertNotNull(memoryCard.getBlocks());
-		assertEquals(SaveType.FORMATTED, memoryCard.getBlockAt(10).getSaveType());
+		assertEquals(SaveTypeEnum.FORMATTED, memoryCard.getBlockAt(10).getSaveType());
 		List<Block> result = MemoryCardController.findLinkedBlocks(memoryCard, 10);
 		assertNotNull(result);
 		assertEquals(0, result.size());		
@@ -160,13 +160,13 @@ public class MemoryCardControllerTest {
 		System.out.println(memoryCard);			               
 		assertNotNull(memoryCard);
 		assertNotNull(memoryCard.getBlocks());
-		assertEquals(SaveType.INITIAL, memoryCard.getBlockAt(0).getSaveType());
+		assertEquals(SaveTypeEnum.INITIAL, memoryCard.getBlockAt(0).getSaveType());
 		MemoryCardController.toggleSaveTypeDeleted(memoryCard, 0);
 		System.out.println("After:");
 		System.out.println(memoryCard);		
 		assertNotNull(memoryCard);
 		assertNotNull(memoryCard.getBlocks());
-		assertEquals(SaveType.INITIAL_DELETED, memoryCard.getBlockAt(0).getSaveType());
+		assertEquals(SaveTypeEnum.INITIAL_DELETED, memoryCard.getBlockAt(0).getSaveType());
 	}
 	
 	@Test
@@ -177,13 +177,13 @@ public class MemoryCardControllerTest {
 		System.out.println(memoryCard);			               
 		assertNotNull(memoryCard);
 		assertNotNull(memoryCard.getBlocks());
-		assertEquals(SaveType.INITIAL_DELETED, memoryCard.getBlockAt(0).getSaveType());
+		assertEquals(SaveTypeEnum.INITIAL_DELETED, memoryCard.getBlockAt(0).getSaveType());
 		MemoryCardController.toggleSaveTypeDeleted(memoryCard, 0);
 		System.out.println("After:");
 		System.out.println(memoryCard);		
 		assertNotNull(memoryCard);
 		assertNotNull(memoryCard.getBlocks());
-		assertEquals(SaveType.INITIAL, memoryCard.getBlockAt(0).getSaveType());
+		assertEquals(SaveTypeEnum.INITIAL, memoryCard.getBlockAt(0).getSaveType());
 	}
 	
 	@Test
@@ -194,15 +194,15 @@ public class MemoryCardControllerTest {
 		System.out.println(memoryCard);			               
 		assertNotNull(memoryCard);
 		assertNotNull(memoryCard.getBlocks());
-		assertEquals(SaveType.INITIAL, memoryCard.getBlockAt(1).getSaveType());
-		assertEquals(SaveType.END_LINK, memoryCard.getBlockAt(2).getSaveType());
+		assertEquals(SaveTypeEnum.INITIAL, memoryCard.getBlockAt(1).getSaveType());
+		assertEquals(SaveTypeEnum.END_LINK, memoryCard.getBlockAt(2).getSaveType());
 		MemoryCardController.toggleSaveTypeDeleted(memoryCard, 1);
 		System.out.println("After:");
 		System.out.println(memoryCard);		
 		assertNotNull(memoryCard);
 		assertNotNull(memoryCard.getBlocks());
-		assertEquals(SaveType.INITIAL_DELETED, memoryCard.getBlockAt(1).getSaveType());
-		assertEquals(SaveType.END_LINK_DELETED, memoryCard.getBlockAt(2).getSaveType());
+		assertEquals(SaveTypeEnum.INITIAL_DELETED, memoryCard.getBlockAt(1).getSaveType());
+		assertEquals(SaveTypeEnum.END_LINK_DELETED, memoryCard.getBlockAt(2).getSaveType());
 	}
 	
 	@Test
@@ -213,15 +213,15 @@ public class MemoryCardControllerTest {
 		System.out.println(memoryCard);			               
 		assertNotNull(memoryCard);
 		assertNotNull(memoryCard.getBlocks());
-		assertEquals(SaveType.INITIAL_DELETED, memoryCard.getBlockAt(1).getSaveType());
-		assertEquals(SaveType.END_LINK_DELETED, memoryCard.getBlockAt(2).getSaveType());
+		assertEquals(SaveTypeEnum.INITIAL_DELETED, memoryCard.getBlockAt(1).getSaveType());
+		assertEquals(SaveTypeEnum.END_LINK_DELETED, memoryCard.getBlockAt(2).getSaveType());
 		MemoryCardController.toggleSaveTypeDeleted(memoryCard, 1);
 		System.out.println("After:");
 		System.out.println(memoryCard);		
 		assertNotNull(memoryCard);
 		assertNotNull(memoryCard.getBlocks());
-		assertEquals(SaveType.INITIAL, memoryCard.getBlockAt(1).getSaveType());
-		assertEquals(SaveType.END_LINK, memoryCard.getBlockAt(2).getSaveType());
+		assertEquals(SaveTypeEnum.INITIAL, memoryCard.getBlockAt(1).getSaveType());
+		assertEquals(SaveTypeEnum.END_LINK, memoryCard.getBlockAt(2).getSaveType());
 	}
 	
 	@Test
@@ -232,16 +232,16 @@ public class MemoryCardControllerTest {
 		System.out.println(memoryCard);			               
 		assertNotNull(memoryCard);
 		assertNotNull(memoryCard.getBlocks());
-		assertEquals(SaveType.INITIAL, memoryCard.getBlockAt(6).getSaveType());
-		assertEquals(SaveType.MIDDLE_LINK, memoryCard.getBlockAt(7).getSaveType());
-		assertEquals(SaveType.END_LINK, memoryCard.getBlockAt(8).getSaveType());
+		assertEquals(SaveTypeEnum.INITIAL, memoryCard.getBlockAt(6).getSaveType());
+		assertEquals(SaveTypeEnum.MIDDLE_LINK, memoryCard.getBlockAt(7).getSaveType());
+		assertEquals(SaveTypeEnum.END_LINK, memoryCard.getBlockAt(8).getSaveType());
 		MemoryCardController.toggleSaveTypeDeleted(memoryCard, 7);
 		System.out.println("After:");
 		System.out.println(memoryCard);		
 		assertNotNull(memoryCard);
-		assertEquals(SaveType.INITIAL_DELETED, memoryCard.getBlockAt(6).getSaveType());
-		assertEquals(SaveType.MIDDLE_LINK_DELETED, memoryCard.getBlockAt(7).getSaveType());
-		assertEquals(SaveType.END_LINK_DELETED, memoryCard.getBlockAt(8).getSaveType());
+		assertEquals(SaveTypeEnum.INITIAL_DELETED, memoryCard.getBlockAt(6).getSaveType());
+		assertEquals(SaveTypeEnum.MIDDLE_LINK_DELETED, memoryCard.getBlockAt(7).getSaveType());
+		assertEquals(SaveTypeEnum.END_LINK_DELETED, memoryCard.getBlockAt(8).getSaveType());
 	}
 	
 	@Test
@@ -252,16 +252,16 @@ public class MemoryCardControllerTest {
 		System.out.println(memoryCard);			               
 		assertNotNull(memoryCard);
 		assertNotNull(memoryCard.getBlocks());
-		assertEquals(SaveType.INITIAL_DELETED, memoryCard.getBlockAt(6).getSaveType());
-		assertEquals(SaveType.MIDDLE_LINK_DELETED, memoryCard.getBlockAt(7).getSaveType());
-		assertEquals(SaveType.END_LINK_DELETED, memoryCard.getBlockAt(8).getSaveType());
+		assertEquals(SaveTypeEnum.INITIAL_DELETED, memoryCard.getBlockAt(6).getSaveType());
+		assertEquals(SaveTypeEnum.MIDDLE_LINK_DELETED, memoryCard.getBlockAt(7).getSaveType());
+		assertEquals(SaveTypeEnum.END_LINK_DELETED, memoryCard.getBlockAt(8).getSaveType());
 		MemoryCardController.toggleSaveTypeDeleted(memoryCard, 7);
 		System.out.println("After:");
 		System.out.println(memoryCard);		
 		assertNotNull(memoryCard);
-		assertEquals(SaveType.INITIAL, memoryCard.getBlockAt(6).getSaveType());
-		assertEquals(SaveType.MIDDLE_LINK, memoryCard.getBlockAt(7).getSaveType());
-		assertEquals(SaveType.END_LINK, memoryCard.getBlockAt(8).getSaveType());
+		assertEquals(SaveTypeEnum.INITIAL, memoryCard.getBlockAt(6).getSaveType());
+		assertEquals(SaveTypeEnum.MIDDLE_LINK, memoryCard.getBlockAt(7).getSaveType());
+		assertEquals(SaveTypeEnum.END_LINK, memoryCard.getBlockAt(8).getSaveType());
 	}
 	
 	@Test
@@ -272,16 +272,16 @@ public class MemoryCardControllerTest {
 		System.out.println(memoryCard);			               
 		assertNotNull(memoryCard);
 		assertNotNull(memoryCard.getBlocks());
-		assertEquals(SaveType.INITIAL, memoryCard.getBlockAt(6).getSaveType());
-		assertEquals(SaveType.MIDDLE_LINK, memoryCard.getBlockAt(7).getSaveType());
-		assertEquals(SaveType.END_LINK, memoryCard.getBlockAt(8).getSaveType());
+		assertEquals(SaveTypeEnum.INITIAL, memoryCard.getBlockAt(6).getSaveType());
+		assertEquals(SaveTypeEnum.MIDDLE_LINK, memoryCard.getBlockAt(7).getSaveType());
+		assertEquals(SaveTypeEnum.END_LINK, memoryCard.getBlockAt(8).getSaveType());
 		MemoryCardController.toggleSaveTypeDeleted(memoryCard, 8);
 		System.out.println("After:");
 		System.out.println(memoryCard);		
 		assertNotNull(memoryCard);
-		assertEquals(SaveType.INITIAL_DELETED, memoryCard.getBlockAt(6).getSaveType());
-		assertEquals(SaveType.MIDDLE_LINK_DELETED, memoryCard.getBlockAt(7).getSaveType());
-		assertEquals(SaveType.END_LINK_DELETED, memoryCard.getBlockAt(8).getSaveType());
+		assertEquals(SaveTypeEnum.INITIAL_DELETED, memoryCard.getBlockAt(6).getSaveType());
+		assertEquals(SaveTypeEnum.MIDDLE_LINK_DELETED, memoryCard.getBlockAt(7).getSaveType());
+		assertEquals(SaveTypeEnum.END_LINK_DELETED, memoryCard.getBlockAt(8).getSaveType());
 	}
 	
 	@Test
@@ -292,16 +292,16 @@ public class MemoryCardControllerTest {
 		System.out.println(memoryCard);			               
 		assertNotNull(memoryCard);
 		assertNotNull(memoryCard.getBlocks());
-		assertEquals(SaveType.INITIAL_DELETED, memoryCard.getBlockAt(6).getSaveType());
-		assertEquals(SaveType.MIDDLE_LINK_DELETED, memoryCard.getBlockAt(7).getSaveType());
-		assertEquals(SaveType.END_LINK_DELETED, memoryCard.getBlockAt(8).getSaveType());
+		assertEquals(SaveTypeEnum.INITIAL_DELETED, memoryCard.getBlockAt(6).getSaveType());
+		assertEquals(SaveTypeEnum.MIDDLE_LINK_DELETED, memoryCard.getBlockAt(7).getSaveType());
+		assertEquals(SaveTypeEnum.END_LINK_DELETED, memoryCard.getBlockAt(8).getSaveType());
 		MemoryCardController.toggleSaveTypeDeleted(memoryCard, 8);
 		System.out.println("After:");
 		System.out.println(memoryCard);		
 		assertNotNull(memoryCard);
-		assertEquals(SaveType.INITIAL, memoryCard.getBlockAt(6).getSaveType());
-		assertEquals(SaveType.MIDDLE_LINK, memoryCard.getBlockAt(7).getSaveType());
-		assertEquals(SaveType.END_LINK, memoryCard.getBlockAt(8).getSaveType());
+		assertEquals(SaveTypeEnum.INITIAL, memoryCard.getBlockAt(6).getSaveType());
+		assertEquals(SaveTypeEnum.MIDDLE_LINK, memoryCard.getBlockAt(7).getSaveType());
+		assertEquals(SaveTypeEnum.END_LINK, memoryCard.getBlockAt(8).getSaveType());
 	}
 	
 	@Test
@@ -312,12 +312,12 @@ public class MemoryCardControllerTest {
 		System.out.println(memoryCard);			               
 		assertNotNull(memoryCard);
 		assertNotNull(memoryCard.getBlocks());
-		assertEquals(SaveType.FORMATTED, memoryCard.getBlockAt(10).getSaveType());
+		assertEquals(SaveTypeEnum.FORMATTED, memoryCard.getBlockAt(10).getSaveType());
 		MemoryCardController.toggleSaveTypeDeleted(memoryCard, 10);
 		System.out.println("After:");
 		System.out.println(memoryCard);		
 		assertNotNull(memoryCard);
-		assertEquals(SaveType.FORMATTED, memoryCard.getBlockAt(10).getSaveType());		
+		assertEquals(SaveTypeEnum.FORMATTED, memoryCard.getBlockAt(10).getSaveType());		
 	}
 	
 	@Test
@@ -328,14 +328,14 @@ public class MemoryCardControllerTest {
 		System.out.println(memoryCard);			               
 		assertNotNull(memoryCard);
 		assertNotNull(memoryCard.getBlocks());
-		assertEquals(SaveType.INITIAL, memoryCard.getBlockAt(0).getSaveType());
+		assertEquals(SaveTypeEnum.INITIAL, memoryCard.getBlockAt(0).getSaveType());
 		assertEquals("SLUS-00594", memoryCard.getBlockAt(0).getProductCode());
 		MemoryCardController.format(memoryCard, 0);
 		System.out.println("After:");
 		System.out.println(memoryCard);		
 		assertNotNull(memoryCard);
 		assertNotNull(memoryCard.getBlocks());
-		assertEquals(SaveType.FORMATTED, memoryCard.getBlockAt(0).getSaveType());
+		assertEquals(SaveTypeEnum.FORMATTED, memoryCard.getBlockAt(0).getSaveType());
 		assertTrue(memoryCard.getBlockAt(0).getProductCode().trim().isEmpty());
 	}
 	
@@ -347,16 +347,16 @@ public class MemoryCardControllerTest {
 		System.out.println(memoryCard);			               
 		assertNotNull(memoryCard);
 		assertNotNull(memoryCard.getBlocks());
-		assertEquals(SaveType.INITIAL, memoryCard.getBlockAt(1).getSaveType());
-		assertEquals(SaveType.END_LINK, memoryCard.getBlockAt(2).getSaveType());
+		assertEquals(SaveTypeEnum.INITIAL, memoryCard.getBlockAt(1).getSaveType());
+		assertEquals(SaveTypeEnum.END_LINK, memoryCard.getBlockAt(2).getSaveType());
 		assertEquals("SLUS-00292", memoryCard.getBlockAt(1).getProductCode());		
 		MemoryCardController.format(memoryCard, 1);
 		System.out.println("After:");
 		System.out.println(memoryCard);		
 		assertNotNull(memoryCard);
 		assertNotNull(memoryCard.getBlocks());
-		assertEquals(SaveType.FORMATTED, memoryCard.getBlockAt(1).getSaveType());
-		assertEquals(SaveType.FORMATTED, memoryCard.getBlockAt(2).getSaveType());
+		assertEquals(SaveTypeEnum.FORMATTED, memoryCard.getBlockAt(1).getSaveType());
+		assertEquals(SaveTypeEnum.FORMATTED, memoryCard.getBlockAt(2).getSaveType());
 		assertTrue(memoryCard.getBlockAt(1).getProductCode().trim().isEmpty());
 	}
 	
@@ -368,18 +368,18 @@ public class MemoryCardControllerTest {
 		System.out.println(memoryCard);			               
 		assertNotNull(memoryCard);
 		assertNotNull(memoryCard.getBlocks());
-		assertEquals(SaveType.INITIAL, memoryCard.getBlockAt(6).getSaveType());
-		assertEquals(SaveType.MIDDLE_LINK, memoryCard.getBlockAt(7).getSaveType());
-		assertEquals(SaveType.END_LINK, memoryCard.getBlockAt(8).getSaveType());
+		assertEquals(SaveTypeEnum.INITIAL, memoryCard.getBlockAt(6).getSaveType());
+		assertEquals(SaveTypeEnum.MIDDLE_LINK, memoryCard.getBlockAt(7).getSaveType());
+		assertEquals(SaveTypeEnum.END_LINK, memoryCard.getBlockAt(8).getSaveType());
 		assertEquals("SLUS-00614", memoryCard.getBlockAt(6).getProductCode());		
 		MemoryCardController.format(memoryCard, 7);
 		System.out.println("After:");
 		System.out.println(memoryCard);		
 		assertNotNull(memoryCard);
 		assertNotNull(memoryCard.getBlocks());
-		assertEquals(SaveType.FORMATTED, memoryCard.getBlockAt(6).getSaveType());
-		assertEquals(SaveType.FORMATTED, memoryCard.getBlockAt(7).getSaveType());
-		assertEquals(SaveType.FORMATTED, memoryCard.getBlockAt(8).getSaveType());
+		assertEquals(SaveTypeEnum.FORMATTED, memoryCard.getBlockAt(6).getSaveType());
+		assertEquals(SaveTypeEnum.FORMATTED, memoryCard.getBlockAt(7).getSaveType());
+		assertEquals(SaveTypeEnum.FORMATTED, memoryCard.getBlockAt(8).getSaveType());
 		assertTrue(memoryCard.getBlockAt(6).getProductCode().trim().isEmpty());
 	}
 	
@@ -391,18 +391,18 @@ public class MemoryCardControllerTest {
 		System.out.println(memoryCard);			               
 		assertNotNull(memoryCard);
 		assertNotNull(memoryCard.getBlocks());
-		assertEquals(SaveType.INITIAL, memoryCard.getBlockAt(6).getSaveType());
-		assertEquals(SaveType.MIDDLE_LINK, memoryCard.getBlockAt(7).getSaveType());
-		assertEquals(SaveType.END_LINK, memoryCard.getBlockAt(8).getSaveType());
+		assertEquals(SaveTypeEnum.INITIAL, memoryCard.getBlockAt(6).getSaveType());
+		assertEquals(SaveTypeEnum.MIDDLE_LINK, memoryCard.getBlockAt(7).getSaveType());
+		assertEquals(SaveTypeEnum.END_LINK, memoryCard.getBlockAt(8).getSaveType());
 		assertEquals("SLUS-00614", memoryCard.getBlockAt(6).getProductCode());		
 		MemoryCardController.format(memoryCard, 8);
 		System.out.println("After:");
 		System.out.println(memoryCard);		
 		assertNotNull(memoryCard);
 		assertNotNull(memoryCard.getBlocks());
-		assertEquals(SaveType.FORMATTED, memoryCard.getBlockAt(6).getSaveType());
-		assertEquals(SaveType.FORMATTED, memoryCard.getBlockAt(7).getSaveType());
-		assertEquals(SaveType.FORMATTED, memoryCard.getBlockAt(8).getSaveType());
+		assertEquals(SaveTypeEnum.FORMATTED, memoryCard.getBlockAt(6).getSaveType());
+		assertEquals(SaveTypeEnum.FORMATTED, memoryCard.getBlockAt(7).getSaveType());
+		assertEquals(SaveTypeEnum.FORMATTED, memoryCard.getBlockAt(8).getSaveType());
 		assertTrue(memoryCard.getBlockAt(6).getProductCode().trim().isEmpty());
 	}
 	
@@ -414,18 +414,18 @@ public class MemoryCardControllerTest {
 		System.out.println(memoryCard);			               
 		assertNotNull(memoryCard);
 		assertNotNull(memoryCard.getBlocks());
-		assertEquals(SaveType.INITIAL, memoryCard.getBlockAt(6).getSaveType());
-		assertEquals(SaveType.MIDDLE_LINK, memoryCard.getBlockAt(7).getSaveType());
-		assertEquals(SaveType.END_LINK, memoryCard.getBlockAt(8).getSaveType());
+		assertEquals(SaveTypeEnum.INITIAL, memoryCard.getBlockAt(6).getSaveType());
+		assertEquals(SaveTypeEnum.MIDDLE_LINK, memoryCard.getBlockAt(7).getSaveType());
+		assertEquals(SaveTypeEnum.END_LINK, memoryCard.getBlockAt(8).getSaveType());
 		assertEquals("SLUS-00614", memoryCard.getBlockAt(6).getProductCode());		
 		MemoryCardController.format(memoryCard);
 		System.out.println("After:");
 		System.out.println(memoryCard);		
 		assertNotNull(memoryCard);
 		assertNotNull(memoryCard.getBlocks());
-		assertEquals(SaveType.FORMATTED, memoryCard.getBlockAt(6).getSaveType());
-		assertEquals(SaveType.FORMATTED, memoryCard.getBlockAt(7).getSaveType());
-		assertEquals(SaveType.FORMATTED, memoryCard.getBlockAt(8).getSaveType());
+		assertEquals(SaveTypeEnum.FORMATTED, memoryCard.getBlockAt(6).getSaveType());
+		assertEquals(SaveTypeEnum.FORMATTED, memoryCard.getBlockAt(7).getSaveType());
+		assertEquals(SaveTypeEnum.FORMATTED, memoryCard.getBlockAt(8).getSaveType());
 		assertTrue(memoryCard.getBlockAt(6).getProductCode().trim().isEmpty());
 	}
 }

@@ -11,7 +11,8 @@ import java.util.Optional;
 import java.util.ResourceBundle;
 
 import it.pyrox.jammer.core.controller.MemoryCardController;
-import it.pyrox.jammer.core.enums.SaveType;
+import it.pyrox.jammer.core.enums.RegionEnum;
+import it.pyrox.jammer.core.enums.SaveTypeEnum;
 import it.pyrox.jammer.core.model.Block;
 import it.pyrox.jammer.core.model.MemoryCard;
 import it.pyrox.jammer.desktop.util.Constants;
@@ -146,9 +147,9 @@ public class MainApplicationController implements Initializable {
 		if (clickable) {
 			Optional<Block> optionalBlock = blockList.stream().filter(e -> index == e.getIndex()).findFirst();			
 			if (optionalBlock.isPresent() &&
-				(SaveType.INITIAL_DELETED.equals(optionalBlock.get().getSaveType()) ||
-				SaveType.MIDDLE_LINK_DELETED.equals(optionalBlock.get().getSaveType()) ||
-				SaveType.END_LINK_DELETED.equals(optionalBlock.get().getSaveType()))) {
+				(SaveTypeEnum.INITIAL_DELETED.equals(optionalBlock.get().getSaveType()) ||
+				SaveTypeEnum.MIDDLE_LINK_DELETED.equals(optionalBlock.get().getSaveType()) ||
+				SaveTypeEnum.END_LINK_DELETED.equals(optionalBlock.get().getSaveType()))) {
 				imageViewTmp.setOpacity(0.5);
 			}			
 			tmpPane.getStyleClass().add("selected");
@@ -220,7 +221,9 @@ public class MainApplicationController implements Initializable {
 		addHeaderLabelInDialogPanelGrid(gridPane, bundle, "dialog.save.info.content.identifier", 0, 2);
 		gridPane.add(new Label(blockList.get(0).getIdentifier()), 1, 2);
 		addHeaderLabelInDialogPanelGrid(gridPane, bundle, "dialog.save.info.content.region", 0, 3);
-		gridPane.add(new Label(blockList.get(0).getCountryCode()), 1, 3);
+		RegionEnum region = blockList.get(0).getCountryCode();
+		String regionDescription = getTranscodedRegion(region);
+		gridPane.add(new Label(regionDescription), 1, 3);
 		addHeaderLabelInDialogPanelGrid(gridPane, bundle, "dialog.save.info.content.slot", 0, 4);
 		String slots = "";
 		Integer size = 0;
@@ -323,6 +326,21 @@ public class MainApplicationController implements Initializable {
 			map = imagePaneMap2;
 		}
 		return map;
+	}
+	
+	private String getTranscodedRegion(RegionEnum region) {
+		String result = "";
+		ResourceBundle bundle = ResourceBundle.getBundle(Constants.LOCALE_FILE, Locale.getDefault());
+		if (RegionEnum.AMERICA.getCode().equals(region.getCode())) {
+			result = bundle.getString("region.description.america");
+		}
+		else if (RegionEnum.EUROPE.getCode().equals(region.getCode())) {
+			result = bundle.getString("region.description.europe");
+		}
+		else if (RegionEnum.JAPAN.getCode().equals(region.getCode())) {
+			result = bundle.getString("region.description.japan");
+		}
+		return result;
 	}
 	
 	/**

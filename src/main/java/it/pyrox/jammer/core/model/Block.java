@@ -3,7 +3,8 @@ package it.pyrox.jammer.core.model;
 import java.awt.Color;
 import java.awt.image.BufferedImage;
 
-import it.pyrox.jammer.core.enums.SaveType;
+import it.pyrox.jammer.core.enums.RegionEnum;
+import it.pyrox.jammer.core.enums.SaveTypeEnum;
 
 public class Block extends RawBlock {
 	
@@ -17,13 +18,13 @@ public class Block extends RawBlock {
 						   CORRUPTED};
 	
 	private int nextLinkIndex; 
-	private String countryCode;
+	private RegionEnum countryCode;
 	private String productCode;
 	private String identifier;
 	private int rawIndex; // Index parsed from raw save data block (seems often wrong, don't use it)
 	private int index; // Index saved "manually" when reading memory card
 	private String title;
-	private SaveType saveType;
+	private SaveTypeEnum saveType;
 	private int saveSize;
 	private int numFrames;
 	private Color colorPalette[];
@@ -45,11 +46,11 @@ public class Block extends RawBlock {
 		this.nextLinkIndex = nextLinkIndex;
 	}
 
-	public String getCountryCode() {
+	public RegionEnum getCountryCode() {
 		return countryCode;
 	}
 
-	public void setCountryCode(String countryCode) {
+	public void setCountryCode(RegionEnum countryCode) {
 		this.countryCode = countryCode;
 	}
 
@@ -93,11 +94,11 @@ public class Block extends RawBlock {
 		this.title = title;
 	}
 
-	public SaveType getSaveType() {
+	public SaveTypeEnum getSaveType() {
 		return saveType;
 	}
 
-	public void setSaveType(SaveType saveType) {
+	public void setSaveType(SaveTypeEnum saveType) {
 		this.saveType = saveType;
 	}
 
@@ -137,7 +138,7 @@ public class Block extends RawBlock {
 	public String toString() {
 		StringBuilder stringBuilder = new StringBuilder();
 		stringBuilder.append("|");
-		stringBuilder.append(countryCode);
+		stringBuilder.append(countryCode != null ? countryCode.getCode() : "  ");
 		stringBuilder.append("|");
 		stringBuilder.append(productCode);
 		stringBuilder.append("|");

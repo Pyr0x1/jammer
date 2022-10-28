@@ -1,6 +1,6 @@
 package it.pyrox.jammer.core.enums;
 
-public enum SaveType {
+public enum SaveTypeEnum {
 	FORMATTED((byte) 0xA0),
 	INITIAL((byte) 0x51),
 	MIDDLE_LINK((byte) 0x52),
@@ -12,19 +12,19 @@ public enum SaveType {
 	
 	private byte value;
 	
-	SaveType(byte value) {
+	SaveTypeEnum(byte value) {
 		this.value = value;
 	}
 
-	public static SaveType getEnumByValue(byte value) {
-		for (SaveType saveType : SaveType.values()) {
+	public static SaveTypeEnum getEnumByValue(byte value) {
+		for (SaveTypeEnum saveType : SaveTypeEnum.values()) {
 			if (saveType.getValue() == value) {
 				return saveType;
 			}
 		}
 		
 		// If there is no match, return corrupted save type
-		return SaveType.CORRUPTED;
+		return SaveTypeEnum.CORRUPTED;
 	}
 	
 	public byte getValue() {

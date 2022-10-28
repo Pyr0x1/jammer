@@ -8,7 +8,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import it.pyrox.jammer.core.enums.SaveType;
+import it.pyrox.jammer.core.enums.SaveTypeEnum;
 import it.pyrox.jammer.core.model.Block;
 import it.pyrox.jammer.core.model.MemoryCard;
 import it.pyrox.jammer.core.model.RawBlock;
@@ -67,8 +67,8 @@ public class MemoryCardController {
 		Block referenceBlock = memoryCard.getBlockAt(blockIndex);
 		List<Block> linkedBlockList = new ArrayList<Block>();
 		if (referenceBlock == null || 
-			SaveType.CORRUPTED.equals(referenceBlock.getSaveType()) ||
-			SaveType.FORMATTED.equals(referenceBlock.getSaveType())) {
+			SaveTypeEnum.CORRUPTED.equals(referenceBlock.getSaveType()) ||
+			SaveTypeEnum.FORMATTED.equals(referenceBlock.getSaveType())) {
 			return linkedBlockList;
 		}
 		else {

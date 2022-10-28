@@ -8,7 +8,8 @@ import java.nio.charset.StandardCharsets;
 
 import com.ibm.icu.text.Transliterator;
 
-import it.pyrox.jammer.core.enums.SaveType;
+import it.pyrox.jammer.core.enums.RegionEnum;
+import it.pyrox.jammer.core.enums.SaveTypeEnum;
 import it.pyrox.jammer.core.model.Block;
 import it.pyrox.jammer.core.model.RawBlock;
 import it.pyrox.jammer.core.util.Constants;
@@ -46,11 +47,13 @@ public class BlockController {
 		return linkIndex;
 	}
 	
-	private static String parseCountryCode(RawBlock rawBlock) {
+	private static RegionEnum parseCountryCode(RawBlock rawBlock) {
 		byte[] countryCode = new byte[2];
 		countryCode[0] = rawBlock.getHeader()[10];
 		countryCode[1] = rawBlock.getHeader()[11];
-		return new String(countryCode, StandardCharsets.US_ASCII);
+		String regionCode = new String(countryCode, StandardCharsets.US_ASCII);
+		RegionEnum regionEnum = RegionEnum.getEnumByValue(regionCode);
+		return regionEnum;
 	}
 	
 	private static String parseProductCode(RawBlock rawBlock) {
@@ -98,9 +101,9 @@ public class BlockController {
 		return titleString;
 	}
 	
-	private static SaveType parseSaveType(RawBlock rawBlock) {
+	private static SaveTypeEnum parseSaveType(RawBlock rawBlock) {
 		byte rawSaveType = rawBlock.getHeader()[0];
-		return SaveType.getEnumByValue(rawSaveType);
+		return SaveTypeEnum.getEnumByValue(rawSaveType);
 	}
 	
 	private static int parseSaveSize(RawBlock rawBlock) {
@@ -219,22 +222,22 @@ public class BlockController {
 	public static void toggleSaveTypeDeleted(Block block) {
 		switch (block.getSaveType()) {
 			case INITIAL:
-				block.setSaveType(SaveType.INITIAL_DELETED);
+				block.setSaveType(SaveTypeEnum.INITIAL_DELETED);
 				break;
 			case MIDDLE_LINK:
-				block.setSaveType(SaveType.MIDDLE_LINK_DELETED);
+				block.setSaveType(SaveTypeEnum.MIDDLE_LINK_DELETED);
 				break;
 			case END_LINK:
-				block.setSaveType(SaveType.END_LINK_DELETED);
+				block.setSaveType(SaveTypeEnum.END_LINK_DELETED);
 				break;
 			case INITIAL_DELETED:
-				block.setSaveType(SaveType.INITIAL);
+				block.setSaveType(SaveTypeEnum.INITIAL);
 				break;
 			case MIDDLE_LINK_DELETED:
-				block.setSaveType(SaveType.MIDDLE_LINK);
+				block.setSaveType(SaveTypeEnum.MIDDLE_LINK);
 				break;
 			case END_LINK_DELETED:
-				block.setSaveType(SaveType.END_LINK);
+				block.setSaveType(SaveTypeEnum.END_LINK);
 				break;
 			default:
 				break;

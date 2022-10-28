@@ -171,7 +171,7 @@ public class MainApplicationController implements Initializable {
 	private void handleSingleClickedImageBlock(MouseEvent event, TilePane tilePaneTmp) {
 		MemoryCard memoryCard = null;
 		Pane clickedPane = (Pane) event.getSource();
-		deselectAllImageBlocks(tilePaneTmp);
+		deselectAllImageBlocks();
 		clickedPane.pseudoClassStateChanged(Constants.PSEUDO_CLASS_CHECKED, true);
 		if (clickedPane.getParent().equals(tilePane1)) {
 			memoryCard = memoryCard1;
@@ -286,9 +286,15 @@ public class MainApplicationController implements Initializable {
 		return new Image(getClass().getResourceAsStream("/" + Constants.EMPTY_BLOCK_PNG_FILE), 32, 32, true, false);
 	}
 	
-	private void deselectAllImageBlocks(TilePane tilePaneTmp) {
-		for (Node node : tilePaneTmp.getChildren()) {
-			node.pseudoClassStateChanged(Constants.PSEUDO_CLASS_CHECKED, false);
+	private void deselectAllImageBlocks() {
+		for (int i = 0; i < 2; i++) {			
+			TilePane tilePaneTmp = tilePane1;			
+			if (i > 0) {
+				tilePaneTmp = tilePane2;
+			}
+			for (Node node : tilePaneTmp.getChildren()) {
+				node.pseudoClassStateChanged(Constants.PSEUDO_CLASS_CHECKED, false);
+			}
 		}
 	}
 	

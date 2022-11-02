@@ -7,6 +7,7 @@ public class Constants {
 	public static final String TITLE = "Jammer";
 	public static final String LOCALE_FILE = "locale.strings";
 	public static final String FXML_FILE = "Application.fxml";
+	public static final String DIALOG_FXML_FILE = "SaveInfoDialog.fxml";
 	public static final String CSS_FILE = "css/style.css";
 	public static final String EMPTY_BLOCK_PNG_FILE = "empty-block.png";
 	public static final int MIN_STAGE_WIDTH = 340;

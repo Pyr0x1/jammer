@@ -11,37 +11,26 @@ import java.util.Optional;
 import java.util.ResourceBundle;
 
 import it.pyrox.jammer.core.controller.MemoryCardController;
-import it.pyrox.jammer.core.enums.RegionEnum;
 import it.pyrox.jammer.core.enums.SaveTypeEnum;
 import it.pyrox.jammer.core.model.Block;
 import it.pyrox.jammer.core.model.MemoryCard;
 import it.pyrox.jammer.desktop.util.Constants;
+import it.pyrox.jammer.desktop.util.Utils;
 import javafx.application.Platform;
-import javafx.embed.swing.SwingFXUtils;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.geometry.HPos;
 import javafx.geometry.Insets;
 import javafx.scene.Node;
-import javafx.scene.control.ButtonBar.ButtonData;
-import javafx.scene.control.ButtonType;
-import javafx.scene.control.Dialog;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.image.PixelReader;
-import javafx.scene.image.PixelWriter;
-import javafx.scene.image.WritableImage;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.GridPane;
-import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.TilePane;
 import javafx.scene.layout.VBox;
-import javafx.scene.paint.Color;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
@@ -91,12 +80,12 @@ public class MainApplicationController implements Initializable {
 	
 	@FXML
 	private void loadMemoryCard1(final ActionEvent event) {
-		loadMemoryCard(event, 1);
+		loadMemoryCard(1);
 	}
 	
 	@FXML
 	private void loadMemoryCard2(final ActionEvent event) {
-		loadMemoryCard(event, 2);
+		loadMemoryCard(2);
 	}
 	
 	@FXML
@@ -104,7 +93,7 @@ public class MainApplicationController implements Initializable {
 		Platform.exit();
 	}
 	
-	private void loadMemoryCard(final ActionEvent actionEvent, int memoryCardSlot) {
+	private void loadMemoryCard(int memoryCardSlot) {
 		TilePane tilePaneTmp = memoryCardSlot == 1 ? tilePane1 : tilePane2;
 		File file = openFileChooserDialogAndGetFile();
 		if (file == null) {
@@ -128,7 +117,7 @@ public class MainApplicationController implements Initializable {
 			// default empty image
 			Image defaultImage = getDefaultImage();
 			List<Block> blockList = MemoryCardController.findLinkedBlocks(memoryCardTmp, index);
-			Image blockImage = getBlockImage(blockList, index);
+			Image blockImage = getBlockImage(blockList);
 			if (blockImage != null) {
 				setBlockImage(tilePaneTmp, blockImage, blockList, index, true);
 			}
@@ -159,14 +148,16 @@ public class MainApplicationController implements Initializable {
 		            	handleSingleClickedImageBlock(event, tilePaneTmp);
 		            }
 		            else if (event.getClickCount() == 2) {
-		            	handleDoubleClickedImageBlock(event, tilePaneTmp);
+		            	handleDoubleClickedImageBlock(event);
 		            }
 				}
 			});
 		}
 		tilePaneTmp.getChildren().add(tmpPane);
 		Map<String, StackPane> mapTmp = getMapFromTilePane(tilePaneTmp);
-		mapTmp.put(tmpPane.getId(), tmpPane);
+		if (mapTmp != null) {
+			mapTmp.put(tmpPane.getId(), tmpPane);
+		}
 	}
 	
 	private void handleSingleClickedImageBlock(MouseEvent event, TilePane tilePaneTmp) {
@@ -184,14 +175,16 @@ public class MainApplicationController implements Initializable {
 		// Select linked blocks
 		List<Block> blockList = MemoryCardController.findLinkedBlocks(memoryCard, clickedIndex);
 		for (Block block : blockList) {
-			Pane linkedPane = findImagePaneById(tilePaneTmp, getBlockIdFromIndex(tilePaneTmp, block.getIndex()));				
-			linkedPane.pseudoClassStateChanged(Constants.PSEUDO_CLASS_CHECKED, true);					
+			Pane linkedPane = findImagePaneById(tilePaneTmp, getBlockIdFromIndex(tilePaneTmp, block.getIndex()));
+			if (linkedPane != null) {
+				linkedPane.pseudoClassStateChanged(Constants.PSEUDO_CLASS_CHECKED, true);
+			}
 		}
 		// Update block description
 		blockDescriptionLabel.setText(blockList.get(0).getTitle());
 	}
 	
-	private void handleDoubleClickedImageBlock(MouseEvent event, TilePane tilePaneTmp) {
+	private void handleDoubleClickedImageBlock(MouseEvent event) {
 		MemoryCard memoryCard = null;
 		Pane clickedPane = (Pane) event.getSource();
 		if (clickedPane.getParent().equals(tilePane1)) {
@@ -206,56 +199,9 @@ public class MainApplicationController implements Initializable {
 	}
 	
 	private void showSaveInfoDialog(List<Block> blockList) {
-		ResourceBundle bundle = ResourceBundle.getBundle(Constants.LOCALE_FILE, Locale.getDefault());
-		Dialog<String> dialog = new Dialog<>();
-		dialog.setTitle(bundle.getString("dialog.save.info.title"));
-		dialog.setHeaderText(null);		
-		GridPane gridPane = new GridPane();
-		gridPane.setHgap(10);
-		gridPane.setVgap(5);
-		gridPane.setPadding(new Insets(10, 10, 10, 10));
-		addHeaderLabelInDialogPanelGrid(gridPane, bundle, "dialog.save.info.content.title", 0, 0);		
-		gridPane.add(new Label(blockList.get(0).getTitle().trim()), 1, 0);
-		addHeaderLabelInDialogPanelGrid(gridPane, bundle, "dialog.save.info.content.product.code", 0, 1);
-		gridPane.add(new Label(blockList.get(0).getProductCode()), 1, 1);
-		addHeaderLabelInDialogPanelGrid(gridPane, bundle, "dialog.save.info.content.identifier", 0, 2);
-		gridPane.add(new Label(blockList.get(0).getIdentifier()), 1, 2);
-		addHeaderLabelInDialogPanelGrid(gridPane, bundle, "dialog.save.info.content.region", 0, 3);
-		RegionEnum region = blockList.get(0).getCountryCode();
-		String regionDescription = getTranscodedRegion(region);
-		gridPane.add(new Label(regionDescription), 1, 3);
-		addHeaderLabelInDialogPanelGrid(gridPane, bundle, "dialog.save.info.content.slot", 0, 4);
-		String slots = "";
-		Integer size = 0;
-		for (Block block : blockList) {
-			slots += block.getIndex() + 1;
-			if (!block.equals(blockList.get(blockList.size() - 1))) {
-				slots += ", ";
-			}
-			size += block.getSaveSize() / 1000;
-		}
-		gridPane.add(new Label(slots), 1, 4);
-		addHeaderLabelInDialogPanelGrid(gridPane, bundle, "dialog.save.info.content.size", 0, 5);		
-		gridPane.add(new Label(size + " " + Constants.KB), 1, 5);
-		addHeaderLabelInDialogPanelGrid(gridPane, bundle, "dialog.save.info.content.icon.frames", 0, 6);		
-		gridPane.add(new Label(Integer.toString(blockList.get(0).getIcons().length)), 1, 6);
-		Image image = getScaledAntialisedImageFromBufferedImage(blockList.get(0).getIcons()[0], 4);
-		ImageView imageView = new ImageView(image);		
-		StackPane tmpPane = new StackPane();
-		tmpPane.getChildren().add(imageView);
-		HBox hBox = new HBox(10);		
-		hBox.getChildren().add(imageView);
-		hBox.getChildren().add(gridPane);
-		dialog.getDialogPane().setContent(hBox);
-		dialog.getDialogPane().getButtonTypes().add(new ButtonType(bundle.getString("dialog.save.info.button"), ButtonData.CANCEL_CLOSE));
+		Stage stage = (Stage) tilePane1.getScene().getWindow();
+		SaveInfoDialog dialog = new SaveInfoDialog(stage, blockList);
 		dialog.showAndWait();
-	}
-	
-	private void addHeaderLabelInDialogPanelGrid(GridPane gridPane, ResourceBundle bundle, String key, int col, int row) {
-		Label label = new Label(bundle.getString(key));
-		label.setStyle("-fx-font-weight: bold;");
-		gridPane.add(label, col, row);
-		GridPane.setHalignment(label, HPos.RIGHT);		
 	}
 	
 	private int getBlockIndexFromPane(Pane clickedPane) {
@@ -270,15 +216,15 @@ public class MainApplicationController implements Initializable {
 	
 	private Pane findImagePaneById(TilePane tilePane, String id) {
 		Map<String, StackPane> mapTmp = getMapFromTilePane(tilePane);
-		return mapTmp.get(id);		
+		return mapTmp != null ? mapTmp.get(id) : null;		
 	}
 	
-	private Image getBlockImage(List<Block> blockList, int index) {
+	private Image getBlockImage(List<Block> blockList) {
 		Image result = null;		
 		for (Block block : blockList) {
 			BufferedImage[] icons = block.getIcons();
 			if (icons != null && icons.length > 0) {
-				result = getScaledAntialisedImageFromBufferedImage(icons[0], 2);
+				result = Utils.getScaledAntialisedImageFromBufferedImage(icons[0], 2);
 				break;
 			}
 		}
@@ -326,50 +272,5 @@ public class MainApplicationController implements Initializable {
 			map = imagePaneMap2;
 		}
 		return map;
-	}
-	
-	private String getTranscodedRegion(RegionEnum region) {
-		String result = "";
-		ResourceBundle bundle = ResourceBundle.getBundle(Constants.LOCALE_FILE, Locale.getDefault());
-		if (RegionEnum.AMERICA.getCode().equals(region.getCode())) {
-			result = bundle.getString("region.description.america");
-		}
-		else if (RegionEnum.EUROPE.getCode().equals(region.getCode())) {
-			result = bundle.getString("region.description.europe");
-		}
-		else if (RegionEnum.JAPAN.getCode().equals(region.getCode())) {
-			result = bundle.getString("region.description.japan");
-		}
-		return result;
-	}
-	
-	/**
-	 * Custom method to create an Image based on a BufferedImage without antialising
-	 * when resizing. Needed because Image constructor with smooth parameter can't be used
-	 * in this case because image is not from a URL and setting the smooth parameter
-	 * in the enclosing ImageView doesn't work
-	 * 
-	 * @param bufferedImage The input image
-	 * @param scale The scale factor for the result image
-	 * @return
-	 */
-	private Image getScaledAntialisedImageFromBufferedImage(BufferedImage bufferedImage, int scale) {
-		Image imageFromSwing = SwingFXUtils.toFXImage(bufferedImage, null);
-		int width = (int) imageFromSwing.getWidth();
-		int height = (int) imageFromSwing.getHeight();
-		WritableImage resultImage = new WritableImage(width * scale, height * scale);
-		PixelReader pixelReader = imageFromSwing.getPixelReader();
-		PixelWriter pixelWriter = resultImage.getPixelWriter();
-		for (int i = 0; i < height; i++) {
-            for (int j = 0; j < width; j++) {
-                Color color = pixelReader.getColor(i, j);
-                for (int k = 0; k < scale; k++) {
-                	for (int w = 0; w < scale; w++) {                		
-                		pixelWriter.setColor(i * scale + k, j * scale + w, color);
-                	}
-                }
-            }
-        }		
-		return resultImage;
 	}
 }

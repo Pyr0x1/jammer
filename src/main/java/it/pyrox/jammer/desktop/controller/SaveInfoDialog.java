@@ -1,17 +1,23 @@
 package it.pyrox.jammer.desktop.controller;
 
+import java.awt.image.BufferedImage;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.ResourceBundle;
 
 import it.pyrox.jammer.core.enums.RegionEnum;
 import it.pyrox.jammer.core.model.Block;
+import it.pyrox.jammer.desktop.IconFrameTransition;
 import it.pyrox.jammer.desktop.util.Constants;
 import it.pyrox.jammer.desktop.util.Utils;
+import javafx.animation.Transition;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.control.Dialog;
+import javafx.scene.control.DialogEvent;
 import javafx.scene.control.DialogPane;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
@@ -46,6 +52,8 @@ public class SaveInfoDialog extends Dialog<Void> {
 	
 	private List<Block> blockList;
 	
+	private Transition iconFrameAnimation;
+	
 	public SaveInfoDialog() {
 		
 	}
@@ -58,10 +66,17 @@ public class SaveInfoDialog extends Dialog<Void> {
 			URL url = this.getClass().getResource("/" + Constants.DIALOG_FXML_FILE);	
 			FXMLLoader loader = new FXMLLoader(url, bundle);
 			loader.setController(this);
-	        DialogPane dialogPane = loader.load();     
+	        DialogPane dialogPane = loader.load();
 	        initOwner(owner);
 	        setTitle(bundle.getString("dialog.save.info.title"));            
-            setDialogPane(dialogPane);
+            setDialogPane(dialogPane);                      
+            setOnCloseRequest(new EventHandler<DialogEvent>() {
+				
+				@Override
+				public void handle(DialogEvent event) {
+					iconFrameAnimation.stop();										
+				}
+			});            
 		} catch (Exception e) {
 			throw new RuntimeException(e);
 		}
@@ -87,8 +102,14 @@ public class SaveInfoDialog extends Dialog<Void> {
 		contentSlot.setText(stringBuilder.toString());
 		contentSize.setText(size + " " + Constants.KB);
 		contentIconFrames.setText(Integer.toString(blockList.get(0).getIcons().length));
-		Image image = Utils.getScaledAntialisedImageFromBufferedImage(blockList.get(0).getIcons()[0], 4);
-		contentIcon.setImage(image);
+		List<Image> imageList = new ArrayList<>();
+		for (BufferedImage bufferedImage : blockList.get(0).getIcons()) {
+			Image image = Utils.getScaledAntialisedImageFromBufferedImage(bufferedImage, 4);
+			imageList.add(image);
+		}
+		contentIcon.setImage(imageList.get(0));
+		iconFrameAnimation = new IconFrameTransition(imageList, contentIcon);
+		iconFrameAnimation.play();
     }
 	
 	private String getTranscodedRegion(RegionEnum region) {

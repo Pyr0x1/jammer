@@ -27,6 +27,13 @@ public enum SaveTypeEnum {
 		return SaveTypeEnum.CORRUPTED;
 	}
 	
+	public static boolean isDeleted(SaveTypeEnum saveType) {
+		return saveType != null &&
+			   (saveType.equals(INITIAL_DELETED) ||
+				saveType.equals(MIDDLE_LINK_DELETED) ||
+				saveType.equals(END_LINK_DELETED));
+	}
+	
 	public byte getValue() {
 		return value;
 	}

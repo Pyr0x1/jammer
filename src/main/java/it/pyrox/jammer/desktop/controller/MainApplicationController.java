@@ -61,6 +61,10 @@ public class MainApplicationController implements Initializable {
 	
 	private String lastFileChooserDirectory;
 	
+	private List<Block> selectedBlocks;
+	
+	private MemoryCard selectedMemoryCard;
+	
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {				
 		for (int i = 0; i < 2; i++) {			
@@ -89,6 +93,19 @@ public class MainApplicationController implements Initializable {
 	}
 	
 	@FXML
+	private void deleteSaveFile(final ActionEvent event) {
+		if (selectedBlocks != null && !selectedBlocks.isEmpty()) {
+			MemoryCardController.toggleSaveTypeDeleted(selectedMemoryCard, selectedBlocks.get(0).getIndex());
+			TilePane tilePaneTmp = selectedMemoryCard.equals(memoryCard1) ? tilePane1 : tilePane2;
+			for (Block block : selectedBlocks) {
+				Pane imagePane = findImagePaneById(tilePaneTmp, getBlockIdFromIndex(tilePaneTmp, block.getIndex()));
+				ImageView imageView = (ImageView) imagePane.getChildren().get(0);
+				toggleImageOpacity(imageView, SaveTypeEnum.isDeleted(block.getSaveType()));
+			}
+		}
+	}
+	
+	@FXML
 	private void exit(final ActionEvent event) {
 		Platform.exit();
 	}
@@ -112,17 +129,21 @@ public class MainApplicationController implements Initializable {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		tilePaneTmp.getChildren().clear();
+		loadMemoryCardBlocks(memoryCardTmp, tilePaneTmp);
+	}
+	
+	private void loadMemoryCardBlocks(MemoryCard memoryCard, TilePane tilePane) {
+		tilePane.getChildren().clear();
 		for (int index = 0; index < Constants.NUM_BLOCKS; index++) {			
 			// default empty image
 			Image defaultImage = getDefaultImage();
-			List<Block> blockList = MemoryCardController.findLinkedBlocks(memoryCardTmp, index);
+			List<Block> blockList = MemoryCardController.findLinkedBlocks(memoryCard, index);
 			Image blockImage = getBlockImage(blockList);
 			if (blockImage != null) {
-				setBlockImage(tilePaneTmp, blockImage, blockList, index, true);
+				setBlockImage(tilePane, blockImage, blockList, index, true);
 			}
 			else {
-				setBlockImage(tilePaneTmp, defaultImage, blockList, index, false);
+				setBlockImage(tilePane, defaultImage, blockList, index, false);
 			}			
 		}
 	}
@@ -139,7 +160,7 @@ public class MainApplicationController implements Initializable {
 				(SaveTypeEnum.INITIAL_DELETED.equals(optionalBlock.get().getSaveType()) ||
 				SaveTypeEnum.MIDDLE_LINK_DELETED.equals(optionalBlock.get().getSaveType()) ||
 				SaveTypeEnum.END_LINK_DELETED.equals(optionalBlock.get().getSaveType()))) {
-				imageViewTmp.setOpacity(0.5);
+				toggleImageOpacity(imageViewTmp, true);
 			}			
 			tmpPane.getStyleClass().add("selected");
 			tmpPane.setOnMouseClicked(event -> {
@@ -171,7 +192,7 @@ public class MainApplicationController implements Initializable {
 		else if (clickedPane.getParent().equals(tilePane2)) {
 			memoryCard = memoryCard2;
 		}
-		int clickedIndex = getBlockIndexFromPane(clickedPane);
+		int clickedIndex = getBlockIndexFromClickedImagePane(clickedPane);
 		// Select linked blocks
 		List<Block> blockList = MemoryCardController.findLinkedBlocks(memoryCard, clickedIndex);
 		for (Block block : blockList) {
@@ -182,6 +203,9 @@ public class MainApplicationController implements Initializable {
 		}
 		// Update block description
 		blockDescriptionLabel.setText(blockList.get(0).getTitle());
+		// Save currently selected blocks and memory card
+		selectedBlocks = blockList;
+		selectedMemoryCard = memoryCard;
 	}
 	
 	private void handleDoubleClickedImageBlock(MouseEvent event) {
@@ -193,7 +217,7 @@ public class MainApplicationController implements Initializable {
 		else if (clickedPane.getParent().equals(tilePane2)) {
 			memoryCard = memoryCard2;
 		}
-		int clickedIndex = getBlockIndexFromPane(clickedPane);
+		int clickedIndex = getBlockIndexFromClickedImagePane(clickedPane);
 		List<Block> blockList = MemoryCardController.findLinkedBlocks(memoryCard, clickedIndex);
 		showSaveInfoDialog(blockList);
 	}
@@ -204,7 +228,7 @@ public class MainApplicationController implements Initializable {
 		dialog.showAndWait();
 	}
 	
-	private int getBlockIndexFromPane(Pane clickedPane) {
+	private int getBlockIndexFromClickedImagePane(Pane clickedPane) {
 		String id = clickedPane.getId();
 		String[] splittedId = id.split(Constants.IMAGE_PANE_BASE_ID);
 		return Integer.parseInt(splittedId[1]);
@@ -217,6 +241,15 @@ public class MainApplicationController implements Initializable {
 	private Pane findImagePaneById(TilePane tilePane, String id) {
 		Map<String, StackPane> mapTmp = getMapFromTilePane(tilePane);
 		return mapTmp != null ? mapTmp.get(id) : null;		
+	}
+	
+	private void toggleImageOpacity(ImageView imageView, boolean isBlockDeleted) {
+		if (isBlockDeleted) {
+			imageView.setOpacity(0.5);
+		}
+		else {
+			imageView.setOpacity(1);
+		}
 	}
 	
 	private Image getBlockImage(List<Block> blockList) {

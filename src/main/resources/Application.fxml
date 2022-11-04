@@ -40,7 +40,7 @@
 			alignment="CENTER">
 			<Button text="%button.copy" maxWidth="Infinity" />
 			<Button text="%button.copy.all" maxWidth="Infinity" />
-			<Button text="%button.delete" maxWidth="Infinity" />
+			<Button text="%button.delete" maxWidth="Infinity" onAction="#deleteSaveFile"/>
 		</VBox>
 		<TilePane fx:id="tilePane2" prefColumns="3">
 			<!-- Populated in controller initialize method -->

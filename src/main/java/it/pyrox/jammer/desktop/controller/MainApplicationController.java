@@ -22,6 +22,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.geometry.Insets;
 import javafx.scene.Node;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -50,6 +51,12 @@ public class MainApplicationController implements Initializable {
 	
 	@FXML
 	private Label blockDescriptionLabel;
+	
+	@FXML
+	private Button deleteButton;
+	
+	@FXML
+	private Button restoreButton;
 	
 	private MemoryCard memoryCard1;
 	
@@ -94,6 +101,20 @@ public class MainApplicationController implements Initializable {
 	
 	@FXML
 	private void deleteSaveFile(final ActionEvent event) {
+		toggleSaveFileDeletedState(true);
+	}
+	
+	@FXML
+	private void restoreSaveFile(final ActionEvent event) {
+		toggleSaveFileDeletedState(false);
+	}
+	
+	@FXML
+	private void exit(final ActionEvent event) {
+		Platform.exit();
+	}
+	
+	private void toggleSaveFileDeletedState(boolean isDelete) {
 		if (selectedBlocks != null && !selectedBlocks.isEmpty()) {
 			MemoryCardController.toggleSaveTypeDeleted(selectedMemoryCard, selectedBlocks.get(0).getIndex());
 			TilePane tilePaneTmp = selectedMemoryCard.equals(memoryCard1) ? tilePane1 : tilePane2;
@@ -102,12 +123,8 @@ public class MainApplicationController implements Initializable {
 				ImageView imageView = (ImageView) imagePane.getChildren().get(0);
 				toggleImageOpacity(imageView, SaveTypeEnum.isDeleted(block.getSaveType()));
 			}
+			toggleDeleteRestoreButtons(isDelete);
 		}
-	}
-	
-	@FXML
-	private void exit(final ActionEvent event) {
-		Platform.exit();
 	}
 	
 	private void loadMemoryCard(int memoryCardSlot) {
@@ -156,10 +173,7 @@ public class MainApplicationController implements Initializable {
 		tmpPane.setId(getBlockIdFromIndex(tilePaneTmp, index));
 		if (clickable) {
 			Optional<Block> optionalBlock = blockList.stream().filter(e -> index == e.getIndex()).findFirst();			
-			if (optionalBlock.isPresent() &&
-				(SaveTypeEnum.INITIAL_DELETED.equals(optionalBlock.get().getSaveType()) ||
-				SaveTypeEnum.MIDDLE_LINK_DELETED.equals(optionalBlock.get().getSaveType()) ||
-				SaveTypeEnum.END_LINK_DELETED.equals(optionalBlock.get().getSaveType()))) {
+			if (optionalBlock.isPresent() && SaveTypeEnum.isDeleted(optionalBlock.get().getSaveType())) {
 				toggleImageOpacity(imageViewTmp, true);
 			}			
 			tmpPane.getStyleClass().add("selected");
@@ -206,6 +220,9 @@ public class MainApplicationController implements Initializable {
 		// Save currently selected blocks and memory card
 		selectedBlocks = blockList;
 		selectedMemoryCard = memoryCard;
+		// Update label for Delete/Restore buttons (check only if first block is deleted because linked ones are supposed to be the same)
+		toggleDeleteRestoreButtons(SaveTypeEnum.isDeleted(blockList.get(0).getSaveType()));
+
 	}
 	
 	private void handleDoubleClickedImageBlock(MouseEvent event) {
@@ -305,5 +322,10 @@ public class MainApplicationController implements Initializable {
 			map = imagePaneMap2;
 		}
 		return map;
+	}
+	
+	private void toggleDeleteRestoreButtons(boolean isDeleted) {
+		deleteButton.setDisable(isDeleted);
+		restoreButton.setDisable(!isDeleted);		
 	}
 }

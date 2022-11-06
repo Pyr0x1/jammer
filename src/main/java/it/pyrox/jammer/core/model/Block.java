@@ -8,15 +8,6 @@ import it.pyrox.jammer.core.enums.SaveTypeEnum;
 
 public class Block extends RawBlock {
 	
-	public enum SAVE_TYPE {FORMATTED,
-						   INITIAL,
-						   MIDDLE_LINK,
-						   END_LINK,
-						   INITIAL_DELETED,
-						   MIDDLE_LINK_DELETED,
-						   END_LINK_DELETED,
-						   CORRUPTED};
-	
 	private int nextLinkIndex; 
 	private RegionEnum countryCode;
 	private String productCode;

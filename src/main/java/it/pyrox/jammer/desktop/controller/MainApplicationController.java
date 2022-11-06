@@ -58,6 +58,12 @@ public class MainApplicationController implements Initializable {
 	@FXML
 	private Button restoreButton;
 	
+	@FXML
+	private Button copyButton;
+	
+	@FXML
+	private Button copyAllButton;
+	
 	private MemoryCard memoryCard1;
 	
 	private MemoryCard memoryCard2;
@@ -86,7 +92,8 @@ public class MainApplicationController implements Initializable {
 				Image image = getDefaultImage();		
 				setBlockImage(tilePaneTmp, image, null, index, false);									
 			}
-		}				
+		}
+		disableAllButtons();
 	}
 	
 	@FXML
@@ -220,9 +227,10 @@ public class MainApplicationController implements Initializable {
 		// Save currently selected blocks and memory card
 		selectedBlocks = blockList;
 		selectedMemoryCard = memoryCard;
+		// Enables all buttons at first
+		enableAllButtons();
 		// Update label for Delete/Restore buttons (check only if first block is deleted because linked ones are supposed to be the same)
 		toggleDeleteRestoreButtons(SaveTypeEnum.isDeleted(blockList.get(0).getSaveType()));
-
 	}
 	
 	private void handleDoubleClickedImageBlock(MouseEvent event) {
@@ -322,6 +330,20 @@ public class MainApplicationController implements Initializable {
 			map = imagePaneMap2;
 		}
 		return map;
+	}
+	
+	private void enableAllButtons() {
+		deleteButton.setDisable(false);
+		restoreButton.setDisable(false);
+		copyButton.setDisable(false);
+		copyAllButton.setDisable(false);
+	}
+	
+	private void disableAllButtons() {
+		deleteButton.setDisable(true);
+		restoreButton.setDisable(true);
+		copyButton.setDisable(true);
+		copyAllButton.setDisable(true);
 	}
 	
 	private void toggleDeleteRestoreButtons(boolean isDeleted) {

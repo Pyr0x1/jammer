@@ -38,10 +38,10 @@
 		</TilePane>
 		<VBox fx:id="actionButtonsContainer" spacing="20"
 			alignment="CENTER">
-			<Button text="%button.copy" maxWidth="Infinity" />
-			<Button text="%button.copy.all" maxWidth="Infinity" />
+			<Button fx:id="copyButton" text="%button.copy" maxWidth="Infinity"/>
+			<Button fx:id="copyAllButton" text="%button.copy.all" maxWidth="Infinity"/>
 			<Button fx:id="deleteButton" text="%button.delete" maxWidth="Infinity" onAction="#deleteSaveFile"/>
-			<Button fx:id="restoreButton" text="%button.restore" maxWidth="Infinity" onAction="#restoreSaveFile" disable="true"/>
+			<Button fx:id="restoreButton" text="%button.restore" maxWidth="Infinity" onAction="#restoreSaveFile"/>
 		</VBox>
 		<TilePane fx:id="tilePane2" prefColumns="3">
 			<!-- Populated in controller initialize method -->

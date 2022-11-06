@@ -41,37 +41,6 @@ public class MemoryCardControllerTest {
 		assertEquals("SLES-02533", memoryCard.getBlockAt(13).getProductCode());
 		assertEquals("SLES-02533", memoryCard.getBlockAt(14).getProductCode());
     }
-    
-	@Test
-    public void testMemoryCardFromByteArray() throws IOException {
-		File file = new File(getClass().getClassLoader().getResource("Memorycard1.mcr").getFile());
-		BufferedInputStream input = new BufferedInputStream(new FileInputStream(file));
-		int bytesRead = 1;
-		byte[] byteArray = new byte[256000];
-		while (bytesRead > 0) {
-          bytesRead = input.read(byteArray); 
-        }
-		input.close();
-		MemoryCard memoryCard = MemoryCardController.getInstance(byteArray);
-		System.out.println(memoryCard);
-		assertNotNull(memoryCard);
-		assertNotNull(memoryCard.getBlocks());
-		assertEquals("SLES-02562", memoryCard.getBlockAt(0).getProductCode());
-		assertEquals("SLUS-00664", memoryCard.getBlockAt(1).getProductCode());
-		assertEquals("SLUS-00664", memoryCard.getBlockAt(2).getProductCode());
-		assertEquals("SLUS-00923", memoryCard.getBlockAt(3).getProductCode());
-		assertEquals("SCESP03046", memoryCard.getBlockAt(4).getProductCode());
-		assertEquals("SLES-02562", memoryCard.getBlockAt(5).getProductCode());
-		assertEquals("SLES-02562", memoryCard.getBlockAt(6).getProductCode());
-		assertEquals("SLES-02562", memoryCard.getBlockAt(7).getProductCode());
-		assertEquals("SLES-02562", memoryCard.getBlockAt(8).getProductCode());
-		assertEquals("SLES-02210", memoryCard.getBlockAt(9).getProductCode());
-		assertEquals("SLUS-00986", memoryCard.getBlockAt(10).getProductCode());
-		assertEquals("SLUS-01212", memoryCard.getBlockAt(11).getProductCode());
-		assertEquals("SCUS-94900", memoryCard.getBlockAt(12).getProductCode());
-		assertEquals("SLES-02533", memoryCard.getBlockAt(13).getProductCode());
-		assertEquals("SLES-02533", memoryCard.getBlockAt(14).getProductCode());
-    }
 	
 	@Test
 	public void testFindLinkedBlocksWhenNoLinkedBlock() throws IOException {
@@ -427,5 +396,29 @@ public class MemoryCardControllerTest {
 		assertEquals(SaveTypeEnum.FORMATTED, memoryCard.getBlockAt(7).getSaveType());
 		assertEquals(SaveTypeEnum.FORMATTED, memoryCard.getBlockAt(8).getSaveType());
 		assertTrue(memoryCard.getBlockAt(6).getProductCode().trim().isEmpty());
+	}
+	
+	@Test
+	public void testSaveMemoryCardToFileAfterDelete() throws IOException {
+		File inputFile = new File(getClass().getClassLoader().getResource("Memorycard3.mcr").getFile());
+		MemoryCard memoryCard = MemoryCardController.getInstance(inputFile);			
+		System.out.println("Before:");
+		System.out.println(memoryCard);			               
+		assertNotNull(memoryCard);
+		assertNotNull(memoryCard.getBlocks());
+		assertEquals(SaveTypeEnum.INITIAL, memoryCard.getBlockAt(6).getSaveType());
+		assertEquals(SaveTypeEnum.MIDDLE_LINK, memoryCard.getBlockAt(7).getSaveType());
+		assertEquals(SaveTypeEnum.END_LINK, memoryCard.getBlockAt(8).getSaveType());
+		MemoryCardController.toggleSaveTypeDeleted(memoryCard, 8);
+		MemoryCardController.saveInstance(memoryCard, new File(inputFile.getParent(), "Memorycard3_modified.mcr"));
+		File inputFileModified = new File(getClass().getClassLoader().getResource("Memorycard3_modified.mcr").getFile());
+		MemoryCard memoryCardModified = MemoryCardController.getInstance(inputFileModified);					
+		System.out.println("After:");
+		System.out.println(memoryCardModified);		
+		assertNotNull(memoryCardModified);
+		assertEquals(SaveTypeEnum.INITIAL_DELETED, memoryCardModified.getBlockAt(6).getSaveType());
+		assertEquals(SaveTypeEnum.MIDDLE_LINK_DELETED, memoryCardModified.getBlockAt(7).getSaveType());
+		assertEquals(SaveTypeEnum.END_LINK_DELETED, memoryCardModified.getBlockAt(8).getSaveType());
+		inputFileModified.delete();
 	}
 }

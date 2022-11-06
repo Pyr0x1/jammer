@@ -22,7 +22,10 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.geometry.Insets;
 import javafx.scene.Node;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -68,6 +71,10 @@ public class MainApplicationController implements Initializable {
 	
 	private MemoryCard memoryCard2;
 	
+	private File memoryCard1File;
+	
+	private File memoryCard2File;
+	
 	private Map<String, StackPane> imagePaneMap1;
 	
 	private Map<String, StackPane> imagePaneMap2;
@@ -104,6 +111,16 @@ public class MainApplicationController implements Initializable {
 	@FXML
 	private void loadMemoryCard2(final ActionEvent event) {
 		loadMemoryCard(2);
+	}
+	
+	@FXML
+	private void saveMemoryCard1(final ActionEvent event) {
+		saveMemoryCard(1);
+	}
+	
+	@FXML
+	private void saveMemoryCard2(final ActionEvent event) {
+		saveMemoryCard(2);
 	}
 	
 	@FXML
@@ -146,14 +163,41 @@ public class MainApplicationController implements Initializable {
 			// save open memory cards in the controller
 			if (memoryCardSlot == 1) {
 				memoryCard1 = memoryCardTmp;
+				memoryCard1File = file;
 			}
 			else if (memoryCardSlot == 2) {
 				memoryCard2 = memoryCardTmp;
+				memoryCard2File = file;
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 		loadMemoryCardBlocks(memoryCardTmp, tilePaneTmp);
+	}
+	
+	private void saveMemoryCard(int memoryCardSlot) {
+		MemoryCard memoryCard = memoryCardSlot == 1 ? memoryCard1 : memoryCard2;
+		File memoryCardFile = memoryCardSlot == 1 ? memoryCard1File : memoryCard2File;
+		if (memoryCard != null && memoryCardFile != null) {					
+			if (isSaveConfirmationDialogOk()) {
+				try {
+					MemoryCardController.saveInstance(memoryCard, memoryCardFile);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+		}
+	}	
+	
+	private boolean isSaveConfirmationDialogOk() {
+		ResourceBundle bundle = ResourceBundle.getBundle(Constants.LOCALE_FILE, Locale.getDefault());
+		Alert alert = new Alert(AlertType.CONFIRMATION);
+		alert.setTitle(bundle.getString("dialog.confirmation.save.title"));
+		alert.setHeaderText(null);
+		alert.setContentText(bundle.getString("dialog.confirmation.save.content"));
+
+		Optional<ButtonType> result = alert.showAndWait();
+		return result.get() == ButtonType.OK;		
 	}
 	
 	private void loadMemoryCardBlocks(MemoryCard memoryCard, TilePane tilePane) {

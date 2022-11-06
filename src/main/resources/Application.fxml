@@ -23,8 +23,8 @@
 	            <items>	               
 	               <MenuItem text="%menu.load.1" onAction="#loadMemoryCard1"/>
 	               <MenuItem text="%menu.load.2" onAction="#loadMemoryCard2"/>
-	               <MenuItem text="%menu.save.1"/>
-	               <MenuItem text="%menu.save.2"/>	               
+	               <MenuItem text="%menu.save.1" onAction="#saveMemoryCard1"/>
+	               <MenuItem text="%menu.save.2" onAction="#saveMemoryCard2"/>	               
 	               <SeparatorMenuItem  />
 	               <MenuItem text="%menu.exit" onAction="#exit"/>
 	            </items>

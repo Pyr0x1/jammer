@@ -4,6 +4,7 @@ import java.net.URL;
 import java.util.Locale;
 import java.util.ResourceBundle;
 
+import it.pyrox.jammer.desktop.controller.MainApplicationController;
 import it.pyrox.jammer.desktop.util.Constants;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
@@ -22,9 +23,10 @@ public class MainApplication extends Application {
 		Locale locale = Locale.getDefault();
 		ResourceBundle bundle = ResourceBundle.getBundle(Constants.LOCALE_FILE, locale);
 		URL url = this.getClass().getResource("/" + Constants.FXML_FILE);		
-		FXMLLoader loader = new FXMLLoader(url, bundle);
-        
+		FXMLLoader loader = new FXMLLoader(url, bundle);				        
         VBox vbox = loader.<VBox>load();
+        MainApplicationController controller = loader.getController();
+		controller.setStage(primaryStage);
         Scene scene = new Scene(vbox);
         scene.getStylesheets().add(Constants.CSS_FILE);
         primaryStage.setScene(scene);

@@ -67,6 +67,8 @@ public class MainApplicationController implements Initializable {
 	@FXML
 	private Button copyAllButton;
 	
+	private Stage stage;
+	
 	private MemoryCard memoryCard1;
 	
 	private MemoryCard memoryCard2;
@@ -292,7 +294,6 @@ public class MainApplicationController implements Initializable {
 	}
 	
 	private void showSaveInfoDialog(List<Block> blockList) {
-		Stage stage = (Stage) tilePane1.getScene().getWindow();
 		SaveInfoDialog dialog = new SaveInfoDialog(stage, blockList);
 		dialog.showAndWait();
 	}
@@ -349,8 +350,7 @@ public class MainApplicationController implements Initializable {
 		}
 	}
 	
-	private File openFileChooserDialogAndGetFile() {
-		Stage stage = (Stage) tilePane1.getScene().getWindow();
+	private File openFileChooserDialogAndGetFile() {		
 	    ResourceBundle bundle = ResourceBundle.getBundle(Constants.LOCALE_FILE, Locale.getDefault());
 		FileChooser fileChooser = new FileChooser();
 		FileChooser.ExtensionFilter extFilter = new FileChooser.ExtensionFilter(bundle.getString("file.type.mcr"), "*.mcr");
@@ -393,5 +393,9 @@ public class MainApplicationController implements Initializable {
 	private void toggleDeleteRestoreButtons(boolean isDeleted) {
 		deleteButton.setDisable(isDeleted);
 		restoreButton.setDisable(!isDeleted);		
+	}
+
+	public void setStage(Stage stage) {
+		this.stage = stage;
 	}
 }

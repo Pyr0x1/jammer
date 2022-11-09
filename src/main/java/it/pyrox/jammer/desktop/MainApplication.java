@@ -27,6 +27,7 @@ public class MainApplication extends Application {
         VBox vbox = loader.<VBox>load();
         MainApplicationController controller = loader.getController();
 		controller.setStage(primaryStage);
+		controller.setStageCloseHandler();
         Scene scene = new Scene(vbox);
         scene.getStylesheets().add(Constants.CSS_FILE);
         primaryStage.setScene(scene);

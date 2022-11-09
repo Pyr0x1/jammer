@@ -37,6 +37,7 @@ import javafx.scene.layout.TilePane;
 import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
+import javafx.stage.WindowEvent;
 
 public class MainApplicationController implements Initializable {
 	
@@ -67,6 +68,7 @@ public class MainApplicationController implements Initializable {
 	@FXML
 	private Button copyAllButton;
 	
+	// This is set after the initialize method
 	private Stage stage;
 	
 	private MemoryCard memoryCard1;
@@ -76,6 +78,8 @@ public class MainApplicationController implements Initializable {
 	private File memoryCard1File;
 	
 	private File memoryCard2File;
+	
+	private boolean isMemoryCardChanged;
 	
 	private Map<String, StackPane> imagePaneMap1;
 	
@@ -137,7 +141,17 @@ public class MainApplicationController implements Initializable {
 	
 	@FXML
 	private void exit(final ActionEvent event) {
+		// Needed to consume event in close handler
+		stage.fireEvent(new WindowEvent(stage, WindowEvent.WINDOW_CLOSE_REQUEST));
 		Platform.exit();
+	}
+	
+	public void setStageCloseHandler() {
+		stage.setOnCloseRequest(event -> {
+			if (isMemoryCardChanged && !isExitConfirmationDialogWithChangesOk()) {
+				event.consume();
+			}
+		});
 	}
 	
 	private void toggleSaveFileDeletedState(boolean isDelete) {
@@ -150,6 +164,7 @@ public class MainApplicationController implements Initializable {
 				toggleImageOpacity(imageView, SaveTypeEnum.isDeleted(block.getSaveType()));
 			}
 			toggleDeleteRestoreButtons(isDelete);
+			isMemoryCardChanged = true;
 		}
 	}
 	
@@ -184,6 +199,7 @@ public class MainApplicationController implements Initializable {
 			if (isSaveConfirmationDialogOk()) {
 				try {
 					MemoryCardController.saveInstance(memoryCard, memoryCardFile);
+					isMemoryCardChanged = false;
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
@@ -200,6 +216,17 @@ public class MainApplicationController implements Initializable {
 
 		Optional<ButtonType> result = alert.showAndWait();
 		return result.get() == ButtonType.OK;		
+	}
+	
+	private boolean isExitConfirmationDialogWithChangesOk() {
+		ResourceBundle bundle = ResourceBundle.getBundle(Constants.LOCALE_FILE, Locale.getDefault());
+		Alert alert = new Alert(AlertType.CONFIRMATION);
+		alert.setTitle(bundle.getString("dialog.confirmation.exit.title"));
+		alert.setHeaderText(null);
+		alert.setContentText(bundle.getString("dialog.confirmation.exit.content"));
+
+		Optional<ButtonType> result = alert.showAndWait();
+		return result.get() == ButtonType.OK;
 	}
 	
 	private void loadMemoryCardBlocks(MemoryCard memoryCard, TilePane tilePane) {
@@ -394,7 +421,7 @@ public class MainApplicationController implements Initializable {
 		deleteButton.setDisable(isDeleted);
 		restoreButton.setDisable(!isDeleted);		
 	}
-
+	
 	public void setStage(Stage stage) {
 		this.stage = stage;
 	}

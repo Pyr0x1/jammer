@@ -63,6 +63,9 @@ public class MainApplicationController implements Initializable {
 	private Button restoreButton;
 	
 	@FXML
+	private Button formatButton;
+	
+	@FXML
 	private Button copyButton;
 	
 	@FXML
@@ -140,6 +143,30 @@ public class MainApplicationController implements Initializable {
 	}
 	
 	@FXML
+	private void formatSaveFile(final ActionEvent event) {
+		if (selectedBlocks != null && !selectedBlocks.isEmpty()) {
+			if (isFormatConfirmationDialogOk()) {
+				TilePane tilePaneTmp = selectedMemoryCard.equals(memoryCard1) ? tilePane1 : tilePane2;
+				// Change icon first and format then, otherwise block index is reset
+				for (Block block : selectedBlocks) {
+					Pane imagePane = findImagePaneById(tilePaneTmp, getBlockIdFromIndex(tilePaneTmp, block.getIndex()));
+					if (imagePane != null) {
+						imagePane.pseudoClassStateChanged(Constants.PSEUDO_CLASS_CHECKED, false);
+						imagePane.getStyleClass().remove("selected");
+						imagePane.setOnMouseClicked(null);
+						ImageView imageView = (ImageView) imagePane.getChildren().get(0);
+						imageView.setImage(getDefaultImage());
+					}
+				}			
+				MemoryCardController.format(selectedMemoryCard, selectedBlocks.get(0).getIndex());
+				formatButton.setDisable(true);
+				selectedBlocks = null;
+				isMemoryCardChanged = true;
+			}
+		}
+	}
+	
+	@FXML
 	private void exit(final ActionEvent event) {
 		// Needed to consume event in close handler
 		stage.fireEvent(new WindowEvent(stage, WindowEvent.WINDOW_CLOSE_REQUEST));
@@ -160,8 +187,10 @@ public class MainApplicationController implements Initializable {
 			TilePane tilePaneTmp = selectedMemoryCard.equals(memoryCard1) ? tilePane1 : tilePane2;
 			for (Block block : selectedBlocks) {
 				Pane imagePane = findImagePaneById(tilePaneTmp, getBlockIdFromIndex(tilePaneTmp, block.getIndex()));
-				ImageView imageView = (ImageView) imagePane.getChildren().get(0);
-				toggleImageOpacity(imageView, SaveTypeEnum.isDeleted(block.getSaveType()));
+				if (imagePane != null) {
+					ImageView imageView = (ImageView) imagePane.getChildren().get(0);
+					toggleImageOpacity(imageView, SaveTypeEnum.isDeleted(block.getSaveType()));
+				}
 			}
 			toggleDeleteRestoreButtons(isDelete);
 			isMemoryCardChanged = true;
@@ -224,6 +253,17 @@ public class MainApplicationController implements Initializable {
 		alert.setTitle(bundle.getString("dialog.confirmation.exit.title"));
 		alert.setHeaderText(null);
 		alert.setContentText(bundle.getString("dialog.confirmation.exit.content"));
+
+		Optional<ButtonType> result = alert.showAndWait();
+		return result.get() == ButtonType.OK;
+	}
+	
+	private boolean isFormatConfirmationDialogOk() {
+		ResourceBundle bundle = ResourceBundle.getBundle(Constants.LOCALE_FILE, Locale.getDefault());
+		Alert alert = new Alert(AlertType.CONFIRMATION);
+		alert.setTitle(bundle.getString("dialog.confirmation.format.title"));
+		alert.setHeaderText(null);
+		alert.setContentText(bundle.getString("dialog.confirmation.format.content"));
 
 		Optional<ButtonType> result = alert.showAndWait();
 		return result.get() == ButtonType.OK;
@@ -406,6 +446,7 @@ public class MainApplicationController implements Initializable {
 	private void enableAllButtons() {
 		deleteButton.setDisable(false);
 		restoreButton.setDisable(false);
+		formatButton.setDisable(false);
 		copyButton.setDisable(false);
 		copyAllButton.setDisable(false);
 	}
@@ -413,6 +454,7 @@ public class MainApplicationController implements Initializable {
 	private void disableAllButtons() {
 		deleteButton.setDisable(true);
 		restoreButton.setDisable(true);
+		formatButton.setDisable(true);
 		copyButton.setDisable(true);
 		copyAllButton.setDisable(true);
 	}

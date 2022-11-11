@@ -117,6 +117,3 @@ Thumbs.db
 
 ## Maven
 dependency-reduced-pom.xml
-
-## Project specific
-*.mcr

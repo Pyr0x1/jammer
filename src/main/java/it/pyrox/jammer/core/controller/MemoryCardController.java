@@ -3,11 +3,13 @@ package it.pyrox.jammer.core.controller;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import it.pyrox.jammer.core.enums.SaveTypeEnum;
 import it.pyrox.jammer.core.model.Block;
 import it.pyrox.jammer.core.model.MemoryCard;
+import it.pyrox.jammer.core.util.BlockDefragComparator;
 import it.pyrox.jammer.core.util.Constants;
 import it.pyrox.jammer.core.util.MemoryCardReader;
 import it.pyrox.jammer.core.util.MemoryCardWriter;
@@ -63,7 +65,7 @@ public class MemoryCardController {
 	
 	public static List<Block> findLinkedBlocks(MemoryCard memoryCard, int blockIndex) {
 		Block referenceBlock = memoryCard.getBlockAt(blockIndex);
-		List<Block> linkedBlockList = new ArrayList<Block>();
+		List<Block> linkedBlockList = new ArrayList<>();
 		if (referenceBlock == null || 
 			SaveTypeEnum.CORRUPTED.equals(referenceBlock.getSaveType()) ||
 			SaveTypeEnum.FORMATTED.equals(referenceBlock.getSaveType())) {
@@ -89,8 +91,12 @@ public class MemoryCardController {
 		return linkedBlockList;
 	}
 	
+	public static void defrag(MemoryCard memoryCard) {
+		Arrays.parallelSort(memoryCard.getBlocks(), new BlockDefragComparator());
+	}
+	
 	private static List<Block> findNextLinkedBlocks(MemoryCard memoryCard, int blockIndex) {
-		List<Block> linkedBlockList = new ArrayList<Block>();
+		List<Block> linkedBlockList = new ArrayList<>();
 		int index = blockIndex;
 		for (int i = 0; i < Constants.NUM_BLOCKS; i++) {		
 			Block tmpBlock = memoryCard.getBlockAt(index);

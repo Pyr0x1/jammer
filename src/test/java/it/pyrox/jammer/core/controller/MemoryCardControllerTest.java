@@ -1,6 +1,7 @@
 package it.pyrox.jammer.core.controller;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -420,5 +421,38 @@ public class MemoryCardControllerTest {
 		assertEquals(SaveTypeEnum.MIDDLE_LINK_DELETED, memoryCardModified.getBlockAt(7).getSaveType());
 		assertEquals(SaveTypeEnum.END_LINK_DELETED, memoryCardModified.getBlockAt(8).getSaveType());
 		inputFileModified.delete();
+	}
+	
+	@Test
+	public void testDefragMemoryCard() throws IOException {
+		File inputFile = new File(getClass().getClassLoader().getResource("Memorycard3_defrag.mcr").getFile());
+		MemoryCard memoryCard = MemoryCardController.getInstance(inputFile);			
+		System.out.println("Before:");
+		System.out.println(memoryCard);			               
+		assertNotNull(memoryCard);
+		assertNotNull(memoryCard.getBlocks());
+		assertNotEquals(SaveTypeEnum.FORMATTED, memoryCard.getBlockAt(0).getSaveType());
+		assertEquals(SaveTypeEnum.FORMATTED, memoryCard.getBlockAt(1).getSaveType());
+		assertEquals(SaveTypeEnum.FORMATTED, memoryCard.getBlockAt(2).getSaveType());
+		assertNotEquals(SaveTypeEnum.FORMATTED, memoryCard.getBlockAt(3).getSaveType());
+		assertNotEquals(SaveTypeEnum.FORMATTED, memoryCard.getBlockAt(4).getSaveType());
+		assertEquals(SaveTypeEnum.FORMATTED, memoryCard.getBlockAt(5).getSaveType());
+		assertNotEquals(SaveTypeEnum.FORMATTED, memoryCard.getBlockAt(6).getSaveType());
+		assertNotEquals(SaveTypeEnum.FORMATTED, memoryCard.getBlockAt(7).getSaveType());
+		assertNotEquals(SaveTypeEnum.FORMATTED, memoryCard.getBlockAt(8).getSaveType());
+		MemoryCardController.defrag(memoryCard);
+		System.out.println("After:");
+		System.out.println(memoryCard);
+		assertNotNull(memoryCard);
+		assertNotNull(memoryCard.getBlocks());
+		assertNotEquals(SaveTypeEnum.FORMATTED, memoryCard.getBlockAt(0).getSaveType());
+		assertNotEquals(SaveTypeEnum.FORMATTED, memoryCard.getBlockAt(1).getSaveType());
+		assertNotEquals(SaveTypeEnum.FORMATTED, memoryCard.getBlockAt(2).getSaveType());
+		assertNotEquals(SaveTypeEnum.FORMATTED, memoryCard.getBlockAt(3).getSaveType());
+		assertNotEquals(SaveTypeEnum.FORMATTED, memoryCard.getBlockAt(4).getSaveType());
+		assertNotEquals(SaveTypeEnum.FORMATTED, memoryCard.getBlockAt(5).getSaveType());
+		assertEquals(SaveTypeEnum.FORMATTED, memoryCard.getBlockAt(6).getSaveType());
+		assertEquals(SaveTypeEnum.FORMATTED, memoryCard.getBlockAt(7).getSaveType());
+		assertEquals(SaveTypeEnum.FORMATTED, memoryCard.getBlockAt(8).getSaveType());
 	}
 }

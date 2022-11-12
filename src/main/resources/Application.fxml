@@ -1,11 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<?import java.lang.Integer?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.TilePane?>
 <?import javafx.scene.control.MenuBar?>
 <?import javafx.scene.control.Menu?>
 <?import javafx.scene.control.MenuItem?>
 <?import javafx.scene.control.SeparatorMenuItem?>
-<?import javafx.scene.layout.TilePane?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.control.Button?>
@@ -16,7 +18,11 @@
 <VBox xmlns:fx="http://javafx.com/fxml" 
 	  fx:id="container"
 	  fx:controller="it.pyrox.jammer.desktop.controller.MainApplicationController">
-
+	
+	<fx:define>
+        <Integer fx:id="BLOCK_IMAGE_SIZE" fx:value="32"/>        
+    </fx:define>
+	
 	<MenuBar>
 		<menus>
 			<Menu text="File">
@@ -38,7 +44,156 @@
 	
 	<HBox spacing="20">
 		<TilePane fx:id="tilePane1" prefColumns="3">
-			<!-- Populated in controller initialize method -->
+			<StackPane id="imagePane_1_0">
+				<padding>
+					<Insets top="5" bottom="5" left="5" right="5"/>
+				</padding>
+				<ImageView>
+					<image>
+						<Image url="@empty-block.png" requestedWidth="$BLOCK_IMAGE_SIZE" requestedHeight="$BLOCK_IMAGE_SIZE" preserveRatio="true" smooth="false"/>
+					</image>
+				</ImageView>
+			</StackPane>
+			<StackPane id="imagePane_1_1">
+				<padding>
+					<Insets top="5" bottom="5" left="5" right="5"/>
+				</padding>
+				<ImageView>
+					<image>
+						<Image url="@empty-block.png" requestedWidth="$BLOCK_IMAGE_SIZE" requestedHeight="$BLOCK_IMAGE_SIZE" preserveRatio="true" smooth="false"/>
+					</image>
+				</ImageView>
+			</StackPane>
+			<StackPane id="imagePane_1_2">
+				<padding>
+					<Insets top="5" bottom="5" left="5" right="5"/>
+				</padding>
+				<ImageView>
+					<image>
+						<Image url="@empty-block.png" requestedWidth="$BLOCK_IMAGE_SIZE" requestedHeight="$BLOCK_IMAGE_SIZE" preserveRatio="true" smooth="false"/>
+					</image>
+				</ImageView>
+			</StackPane>
+			<StackPane id="imagePane_1_3">
+				<padding>
+					<Insets top="5" bottom="5" left="5" right="5"/>
+				</padding>
+				<ImageView>
+					<image>
+						<Image url="@empty-block.png" requestedWidth="$BLOCK_IMAGE_SIZE" requestedHeight="$BLOCK_IMAGE_SIZE" preserveRatio="true" smooth="false"/>
+					</image>
+				</ImageView>
+			</StackPane>
+			<StackPane id="imagePane_1_4">
+				<padding>
+					<Insets top="5" bottom="5" left="5" right="5"/>
+				</padding>
+				<ImageView>
+					<image>
+						<Image url="@empty-block.png" requestedWidth="$BLOCK_IMAGE_SIZE" requestedHeight="$BLOCK_IMAGE_SIZE" preserveRatio="true" smooth="false"/>
+					</image>
+				</ImageView>
+			</StackPane>
+			<StackPane id="imagePane_1_5">
+				<padding>
+					<Insets top="5" bottom="5" left="5" right="5"/>
+				</padding>
+				<ImageView>
+					<image>
+						<Image url="@empty-block.png" requestedWidth="$BLOCK_IMAGE_SIZE" requestedHeight="$BLOCK_IMAGE_SIZE" preserveRatio="true" smooth="false"/>
+					</image>
+				</ImageView>
+			</StackPane>
+			<StackPane id="imagePane_1_6">
+				<padding>
+					<Insets top="5" bottom="5" left="5" right="5"/>
+				</padding>
+				<ImageView>
+					<image>
+						<Image url="@empty-block.png" requestedWidth="$BLOCK_IMAGE_SIZE" requestedHeight="$BLOCK_IMAGE_SIZE" preserveRatio="true" smooth="false"/>
+					</image>
+				</ImageView>
+			</StackPane>
+			<StackPane id="imagePane_1_7">
+				<padding>
+					<Insets top="5" bottom="5" left="5" right="5"/>
+				</padding>
+				<ImageView>
+					<image>
+						<Image url="@empty-block.png" requestedWidth="$BLOCK_IMAGE_SIZE" requestedHeight="$BLOCK_IMAGE_SIZE" preserveRatio="true" smooth="false"/>
+					</image>
+				</ImageView>
+			</StackPane>
+			<StackPane id="imagePane_1_8">
+				<padding>
+					<Insets top="5" bottom="5" left="5" right="5"/>
+				</padding>
+				<ImageView>
+					<image>
+						<Image url="@empty-block.png" requestedWidth="$BLOCK_IMAGE_SIZE" requestedHeight="$BLOCK_IMAGE_SIZE" preserveRatio="true" smooth="false"/>
+					</image>
+				</ImageView>
+			</StackPane>
+			<StackPane id="imagePane_1_9">
+				<padding>
+					<Insets top="5" bottom="5" left="5" right="5"/>
+				</padding>
+				<ImageView>
+					<image>
+						<Image url="@empty-block.png" requestedWidth="$BLOCK_IMAGE_SIZE" requestedHeight="$BLOCK_IMAGE_SIZE" preserveRatio="true" smooth="false"/>
+					</image>
+				</ImageView>
+			</StackPane>
+			<StackPane id="imagePane_1_10">
+				<padding>
+					<Insets top="5" bottom="5" left="5" right="5"/>
+				</padding>
+				<ImageView>
+					<image>
+						<Image url="@empty-block.png" requestedWidth="$BLOCK_IMAGE_SIZE" requestedHeight="$BLOCK_IMAGE_SIZE" preserveRatio="true" smooth="false"/>
+					</image>
+				</ImageView>
+			</StackPane>
+			<StackPane id="imagePane_1_11">
+				<padding>
+					<Insets top="5" bottom="5" left="5" right="5"/>
+				</padding>
+				<ImageView>
+					<image>
+						<Image url="@empty-block.png" requestedWidth="$BLOCK_IMAGE_SIZE" requestedHeight="$BLOCK_IMAGE_SIZE" preserveRatio="true" smooth="false"/>
+					</image>
+				</ImageView>
+			</StackPane>
+			<StackPane id="imagePane_1_12">
+				<padding>
+					<Insets top="5" bottom="5" left="5" right="5"/>
+				</padding>
+				<ImageView>
+					<image>
+						<Image url="@empty-block.png" requestedWidth="$BLOCK_IMAGE_SIZE" requestedHeight="$BLOCK_IMAGE_SIZE" preserveRatio="true" smooth="false"/>
+					</image>
+				</ImageView>
+			</StackPane>
+			<StackPane id="imagePane_1_13">
+				<padding>
+					<Insets top="5" bottom="5" left="5" right="5"/>
+				</padding>
+				<ImageView>
+					<image>
+						<Image url="@empty-block.png" requestedWidth="$BLOCK_IMAGE_SIZE" requestedHeight="$BLOCK_IMAGE_SIZE" preserveRatio="true" smooth="false"/>
+					</image>
+				</ImageView>
+			</StackPane>
+			<StackPane id="imagePane_1_14">
+				<padding>
+					<Insets top="5" bottom="5" left="5" right="5"/>
+				</padding>
+				<ImageView>
+					<image>
+						<Image url="@empty-block.png" requestedWidth="$BLOCK_IMAGE_SIZE" requestedHeight="$BLOCK_IMAGE_SIZE" preserveRatio="true" smooth="false"/>
+					</image>
+				</ImageView>
+			</StackPane>
 		</TilePane>
 		<VBox fx:id="actionButtonsContainer" spacing="15"
 			alignment="CENTER">
@@ -52,7 +207,156 @@
 			<Button fx:id="formatButton" text="%button.format" maxWidth="Infinity" onAction="#formatSaveFile"/>
 		</VBox>
 		<TilePane fx:id="tilePane2" prefColumns="3">
-			<!-- Populated in controller initialize method -->
+			<StackPane id="imagePane_2_0">
+				<padding>
+					<Insets top="5" bottom="5" left="5" right="5"/>
+				</padding>
+				<ImageView>
+					<image>
+						<Image url="@empty-block.png" requestedWidth="$BLOCK_IMAGE_SIZE" requestedHeight="$BLOCK_IMAGE_SIZE" preserveRatio="true" smooth="false"/>
+					</image>
+				</ImageView>
+			</StackPane>
+			<StackPane id="imagePane_2_1">
+				<padding>
+					<Insets top="5" bottom="5" left="5" right="5"/>
+				</padding>
+				<ImageView>
+					<image>
+						<Image url="@empty-block.png" requestedWidth="$BLOCK_IMAGE_SIZE" requestedHeight="$BLOCK_IMAGE_SIZE" preserveRatio="true" smooth="false"/>
+					</image>
+				</ImageView>
+			</StackPane>
+			<StackPane id="imagePane_2_2">
+				<padding>
+					<Insets top="5" bottom="5" left="5" right="5"/>
+				</padding>
+				<ImageView>
+					<image>
+						<Image url="@empty-block.png" requestedWidth="$BLOCK_IMAGE_SIZE" requestedHeight="$BLOCK_IMAGE_SIZE" preserveRatio="true" smooth="false"/>
+					</image>
+				</ImageView>
+			</StackPane>
+			<StackPane id="imagePane_2_3">
+				<padding>
+					<Insets top="5" bottom="5" left="5" right="5"/>
+				</padding>
+				<ImageView>
+					<image>
+						<Image url="@empty-block.png" requestedWidth="$BLOCK_IMAGE_SIZE" requestedHeight="$BLOCK_IMAGE_SIZE" preserveRatio="true" smooth="false"/>
+					</image>
+				</ImageView>
+			</StackPane>
+			<StackPane id="imagePane_2_4">
+				<padding>
+					<Insets top="5" bottom="5" left="5" right="5"/>
+				</padding>
+				<ImageView>
+					<image>
+						<Image url="@empty-block.png" requestedWidth="$BLOCK_IMAGE_SIZE" requestedHeight="$BLOCK_IMAGE_SIZE" preserveRatio="true" smooth="false"/>
+					</image>
+				</ImageView>
+			</StackPane>
+			<StackPane id="imagePane_2_5">
+				<padding>
+					<Insets top="5" bottom="5" left="5" right="5"/>
+				</padding>
+				<ImageView>
+					<image>
+						<Image url="@empty-block.png" requestedWidth="$BLOCK_IMAGE_SIZE" requestedHeight="$BLOCK_IMAGE_SIZE" preserveRatio="true" smooth="false"/>
+					</image>
+				</ImageView>
+			</StackPane>
+			<StackPane id="imagePane_2_6">
+				<padding>
+					<Insets top="5" bottom="5" left="5" right="5"/>
+				</padding>
+				<ImageView>
+					<image>
+						<Image url="@empty-block.png" requestedWidth="$BLOCK_IMAGE_SIZE" requestedHeight="$BLOCK_IMAGE_SIZE" preserveRatio="true" smooth="false"/>
+					</image>
+				</ImageView>
+			</StackPane>
+			<StackPane id="imagePane_2_7">
+				<padding>
+					<Insets top="5" bottom="5" left="5" right="5"/>
+				</padding>
+				<ImageView>
+					<image>
+						<Image url="@empty-block.png" requestedWidth="$BLOCK_IMAGE_SIZE" requestedHeight="$BLOCK_IMAGE_SIZE" preserveRatio="true" smooth="false"/>
+					</image>
+				</ImageView>
+			</StackPane>
+			<StackPane id="imagePane_2_8">
+				<padding>
+					<Insets top="5" bottom="5" left="5" right="5"/>
+				</padding>
+				<ImageView>
+					<image>
+						<Image url="@empty-block.png" requestedWidth="$BLOCK_IMAGE_SIZE" requestedHeight="$BLOCK_IMAGE_SIZE" preserveRatio="true" smooth="false"/>
+					</image>
+				</ImageView>
+			</StackPane>
+			<StackPane id="imagePane_2_9">
+				<padding>
+					<Insets top="5" bottom="5" left="5" right="5"/>
+				</padding>
+				<ImageView>
+					<image>
+						<Image url="@empty-block.png" requestedWidth="$BLOCK_IMAGE_SIZE" requestedHeight="$BLOCK_IMAGE_SIZE" preserveRatio="true" smooth="false"/>
+					</image>
+				</ImageView>
+			</StackPane>
+			<StackPane id="imagePane_2_10">
+				<padding>
+					<Insets top="5" bottom="5" left="5" right="5"/>
+				</padding>
+				<ImageView>
+					<image>
+						<Image url="@empty-block.png" requestedWidth="$BLOCK_IMAGE_SIZE" requestedHeight="$BLOCK_IMAGE_SIZE" preserveRatio="true" smooth="false"/>
+					</image>
+				</ImageView>
+			</StackPane>
+			<StackPane id="imagePane_2_11">
+				<padding>
+					<Insets top="5" bottom="5" left="5" right="5"/>
+				</padding>
+				<ImageView>
+					<image>
+						<Image url="@empty-block.png" requestedWidth="$BLOCK_IMAGE_SIZE" requestedHeight="$BLOCK_IMAGE_SIZE" preserveRatio="true" smooth="false"/>
+					</image>
+				</ImageView>
+			</StackPane>
+			<StackPane id="imagePane_2_12">
+				<padding>
+					<Insets top="5" bottom="5" left="5" right="5"/>
+				</padding>
+				<ImageView>
+					<image>
+						<Image url="@empty-block.png" requestedWidth="$BLOCK_IMAGE_SIZE" requestedHeight="$BLOCK_IMAGE_SIZE" preserveRatio="true" smooth="false"/>
+					</image>
+				</ImageView>
+			</StackPane>
+			<StackPane id="imagePane_2_13">
+				<padding>
+					<Insets top="5" bottom="5" left="5" right="5"/>
+				</padding>
+				<ImageView>
+					<image>
+						<Image url="@empty-block.png" requestedWidth="$BLOCK_IMAGE_SIZE" requestedHeight="$BLOCK_IMAGE_SIZE" preserveRatio="true" smooth="false"/>
+					</image>
+				</ImageView>
+			</StackPane>
+			<StackPane id="imagePane_2_14">
+				<padding>
+					<Insets top="5" bottom="5" left="5" right="5"/>
+				</padding>
+				<ImageView>
+					<image>
+						<Image url="@empty-block.png" requestedWidth="$BLOCK_IMAGE_SIZE" requestedHeight="$BLOCK_IMAGE_SIZE" preserveRatio="true" smooth="false"/>
+					</image>
+				</ImageView>
+			</StackPane>
 		</TilePane>
 	</HBox>
 	

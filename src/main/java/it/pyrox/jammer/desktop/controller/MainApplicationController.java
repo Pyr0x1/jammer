@@ -20,7 +20,6 @@ import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.geometry.Insets;
 import javafx.scene.Node;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
@@ -71,6 +70,9 @@ public class MainApplicationController implements Initializable {
 	@FXML
 	private Button copyAllButton;
 	
+	// All stackPanes with ImageViews will be saved in this map for faster retrieval
+	private Map<String, StackPane> imageViewPaneMap;
+	
 	// This is set after the initialize method
 	private Stage stage;
 	
@@ -83,11 +85,7 @@ public class MainApplicationController implements Initializable {
 	private File memoryCard2File;
 	
 	private boolean isMemoryCardChanged;
-	
-	private Map<String, StackPane> imagePaneMap1;
-	
-	private Map<String, StackPane> imagePaneMap2;
-	
+		
 	private String lastFileChooserDirectory;
 	
 	private List<Block> selectedBlocks;
@@ -95,19 +93,14 @@ public class MainApplicationController implements Initializable {
 	private MemoryCard selectedMemoryCard;
 	
 	@Override
-	public void initialize(URL location, ResourceBundle resources) {				
-		for (int i = 0; i < 2; i++) {			
-			TilePane tilePaneTmp = tilePane1;
-			imagePaneMap1 = new HashMap<>();
-			if (i > 0) {
-				tilePaneTmp = tilePane2;
-				imagePaneMap2 = new HashMap<>();
-			}			
-			for (int index = 0; index < Constants.NUM_BLOCKS; index++) {								
-				// default empty image
-				Image image = getDefaultImage();		
-				setBlockImage(tilePaneTmp, image, null, index, false);									
-			}
+	public void initialize(URL location, ResourceBundle resources) {
+		// Load map with imageViews from both panes
+		imageViewPaneMap = new HashMap<String, StackPane>();
+		for (Node node : tilePane1.getChildren()) {			
+			imageViewPaneMap.put(node.getId(), (StackPane) node);
+		}
+		for (Node node : tilePane2.getChildren()) {
+			imageViewPaneMap.put(node.getId(), (StackPane) node);
 		}
 		disableAllButtons();
 	}
@@ -149,7 +142,7 @@ public class MainApplicationController implements Initializable {
 				TilePane tilePaneTmp = selectedMemoryCard.equals(memoryCard1) ? tilePane1 : tilePane2;
 				// Change icon first and format then, otherwise block index is reset
 				for (Block block : selectedBlocks) {
-					Pane imagePane = findImagePaneById(tilePaneTmp, getBlockIdFromIndex(tilePaneTmp, block.getIndex()));
+					Pane imagePane = imageViewPaneMap.get(getBlockIdFromIndex(tilePaneTmp, block.getIndex()));
 					if (imagePane != null) {
 						imagePane.pseudoClassStateChanged(Constants.PSEUDO_CLASS_CHECKED, false);
 						imagePane.getStyleClass().remove("selected");
@@ -186,7 +179,7 @@ public class MainApplicationController implements Initializable {
 			MemoryCardController.toggleSaveTypeDeleted(selectedMemoryCard, selectedBlocks.get(0).getIndex());
 			TilePane tilePaneTmp = selectedMemoryCard.equals(memoryCard1) ? tilePane1 : tilePane2;
 			for (Block block : selectedBlocks) {
-				Pane imagePane = findImagePaneById(tilePaneTmp, getBlockIdFromIndex(tilePaneTmp, block.getIndex()));
+				Pane imagePane = imageViewPaneMap.get(getBlockIdFromIndex(tilePaneTmp, block.getIndex()));
 				if (imagePane != null) {
 					ImageView imageView = (ImageView) imagePane.getChildren().get(0);
 					toggleImageOpacity(imageView, SaveTypeEnum.isDeleted(block.getSaveType()));
@@ -270,7 +263,9 @@ public class MainApplicationController implements Initializable {
 	}
 	
 	private void loadMemoryCardBlocks(MemoryCard memoryCard, TilePane tilePane) {
-		tilePane.getChildren().clear();
+		for (Node imagePane : tilePane.getChildren()) {
+			resetImagePane((StackPane) imagePane);
+		}
 		for (int index = 0; index < Constants.NUM_BLOCKS; index++) {			
 			// default empty image
 			Image defaultImage = getDefaultImage();
@@ -285,19 +280,23 @@ public class MainApplicationController implements Initializable {
 		}
 	}
 	
+	private void resetImagePane(StackPane imagePane) {
+		imagePane.getStyleClass().clear();
+		imagePane.pseudoClassStateChanged(Constants.PSEUDO_CLASS_CHECKED, false);
+		imagePane.setOnMouseClicked(null);
+	}
+	
 	private void setBlockImage(TilePane tilePaneTmp, Image image, List<Block> blockList, int index, boolean clickable) {
-		ImageView imageViewTmp = new ImageView(image);				
-		StackPane tmpPane = new StackPane();
-		tmpPane.getChildren().add(imageViewTmp);
-		tmpPane.setPadding(new Insets(5));
-		tmpPane.setId(getBlockIdFromIndex(tilePaneTmp, index));
+		StackPane imagePane = imageViewPaneMap.get(getBlockIdFromIndex(tilePaneTmp, index));
+		ImageView imageView = (ImageView) imagePane.getChildren().get(0);
+		imageView.setImage(image);
 		if (clickable) {
-			Optional<Block> optionalBlock = blockList.stream().filter(e -> index == e.getIndex()).findFirst();			
+			Optional<Block> optionalBlock = blockList.stream().filter(e -> index == e.getIndex()).findFirst();		
 			if (optionalBlock.isPresent() && SaveTypeEnum.isDeleted(optionalBlock.get().getSaveType())) {
-				toggleImageOpacity(imageViewTmp, true);
-			}			
-			tmpPane.getStyleClass().add("selected");
-			tmpPane.setOnMouseClicked(event -> {
+				toggleImageOpacity(imageView, true);
+			}
+			imagePane.getStyleClass().add("selected");			
+			imagePane.setOnMouseClicked(event -> {
 				if (event.getButton().equals(MouseButton.PRIMARY)) {
 		            if (event.getClickCount() == 1) {
 		            	handleSingleClickedImageBlock(event, tilePaneTmp);
@@ -307,12 +306,7 @@ public class MainApplicationController implements Initializable {
 		            }
 				}
 			});
-		}
-		tilePaneTmp.getChildren().add(tmpPane);
-		Map<String, StackPane> mapTmp = getMapFromTilePane(tilePaneTmp);
-		if (mapTmp != null) {
-			mapTmp.put(tmpPane.getId(), tmpPane);
-		}
+		}		
 	}
 	
 	private void handleSingleClickedImageBlock(MouseEvent event, TilePane tilePaneTmp) {
@@ -330,7 +324,7 @@ public class MainApplicationController implements Initializable {
 		// Select linked blocks
 		List<Block> blockList = MemoryCardController.findLinkedBlocks(memoryCard, clickedIndex);
 		for (Block block : blockList) {
-			Pane linkedPane = findImagePaneById(tilePaneTmp, getBlockIdFromIndex(tilePaneTmp, block.getIndex()));
+			Pane linkedPane = imageViewPaneMap.get(getBlockIdFromIndex(tilePaneTmp, block.getIndex()));
 			if (linkedPane != null) {
 				linkedPane.pseudoClassStateChanged(Constants.PSEUDO_CLASS_CHECKED, true);
 			}
@@ -367,17 +361,19 @@ public class MainApplicationController implements Initializable {
 	
 	private int getBlockIndexFromClickedImagePane(Pane clickedPane) {
 		String id = clickedPane.getId();
-		String[] splittedId = id.split(Constants.IMAGE_PANE_BASE_ID);
+		String[] splittedId = id.split(Constants.IMAGE_PANE_BASE_ID + "_")[1].split("_");
 		return Integer.parseInt(splittedId[1]);
 	}
 	
 	private String getBlockIdFromIndex(TilePane tilePaneTmp, int index) {
-		return tilePaneTmp.getId() + "_" + Constants.IMAGE_PANE_BASE_ID + index;
-	}
-	
-	private Pane findImagePaneById(TilePane tilePane, String id) {
-		Map<String, StackPane> mapTmp = getMapFromTilePane(tilePane);
-		return mapTmp != null ? mapTmp.get(id) : null;		
+		String tilePaneIndex = "";
+		if (tilePane1.equals(tilePaneTmp)) {
+			tilePaneIndex = "1";
+		}
+		else if (tilePane2.equals(tilePaneTmp)) {
+			tilePaneIndex = "2";
+		}
+		return Constants.IMAGE_PANE_BASE_ID + "_" + tilePaneIndex + "_" + index;
 	}
 	
 	private void toggleImageOpacity(ImageView imageView, boolean isBlockDeleted) {
@@ -430,17 +426,6 @@ public class MainApplicationController implements Initializable {
 			lastFileChooserDirectory = file.getParent();
 		}
 		return file;
-	}
-	
-	private Map<String, StackPane> getMapFromTilePane(TilePane tilePane) {
-		Map<String, StackPane> map = null;
-		if (tilePane1.equals(tilePane)) {
-			map = imagePaneMap1;
-		}
-		else if (tilePane2.equals(tilePane)) {
-			map = imagePaneMap2;
-		}
-		return map;
 	}
 	
 	private void enableAllButtons() {

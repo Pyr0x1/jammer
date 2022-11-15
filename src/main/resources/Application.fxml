@@ -25,7 +25,7 @@
 	
 	<MenuBar>
 		<menus>
-			<Menu text="File">
+			<Menu text="%menu.file">
 	            <items>
 	            	<Menu text="%menu.load">
 	            		<MenuItem text="%menu.slot.1" onAction="#loadMemoryCard1"/>
@@ -37,6 +37,14 @@
 	            	</Menu>               
 	               	<SeparatorMenuItem  />
 	               	<MenuItem text="%menu.exit" onAction="#exit"/>
+	            </items>
+	         </Menu>
+	         <Menu text="%menu.edit">
+	            <items>
+	            	<Menu text="%menu.defrag">
+	            		<MenuItem text="%menu.slot.1" onAction="#defragMemoryCard1"/>
+	            		<MenuItem text="%menu.slot.2" onAction="#defragMemoryCard2"/>
+	            	</Menu>		            	
 	            </items>
 	         </Menu>
 		</menus>

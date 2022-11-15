@@ -160,6 +160,16 @@ public class MainApplicationController implements Initializable {
 	}
 	
 	@FXML
+	private void defragMemoryCard1(final ActionEvent event) {
+		defragMemoryCard(1);
+	}
+	
+	@FXML
+	private void defragMemoryCard2(final ActionEvent event) {
+		defragMemoryCard(2);
+	}
+	
+	@FXML
 	private void exit(final ActionEvent event) {
 		// Needed to consume event in close handler
 		stage.fireEvent(new WindowEvent(stage, WindowEvent.WINDOW_CLOSE_REQUEST));
@@ -426,6 +436,16 @@ public class MainApplicationController implements Initializable {
 			lastFileChooserDirectory = file.getParent();
 		}
 		return file;
+	}
+	
+	private void defragMemoryCard(int memoryCardSlot) {
+		TilePane tilePane = memoryCardSlot == 1 ? tilePane1 : tilePane2;
+		MemoryCard memoryCard = memoryCardSlot == 1 ? memoryCard1 : memoryCard2;
+		if (memoryCard != null) {
+			MemoryCardController.defrag(memoryCard);
+			loadMemoryCardBlocks(memoryCard, tilePane);
+			isMemoryCardChanged = true;
+		}
 	}
 	
 	private void enableAllButtons() {

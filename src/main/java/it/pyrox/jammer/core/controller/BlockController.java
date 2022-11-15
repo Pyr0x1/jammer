@@ -39,6 +39,13 @@ public class BlockController {
 		block.setIcons(parseIcons(block));
 	}
 	
+	public static void serialize(Block block) {
+		serializeIndex(block);
+		serializeNextLinkIndex(block);
+		serializeSaveType(block);
+		calculateChecksum(block);
+	}
+	
 	private static int parseNextLinkIndex(RawBlock rawBlock) {
 		int linkIndex = 0;
 		linkIndex += rawBlock.getHeader()[8];
@@ -195,6 +202,17 @@ public class BlockController {
 		block.getHeader()[0] = block.getSaveType().getValue();
 	}
 	
+	private static void serializeIndex(Block block) {
+		// Overwrites raw index with the index set while reading the card
+		int index = block.getIndex();
+		block.getHeader()[3] = (byte) index;
+	}
+	
+	private static void serializeNextLinkIndex(Block block) {
+		int nextLinkIndex = block.getNextLinkIndex();
+		block.getHeader()[8] = (byte) nextLinkIndex;
+	}
+	
 	private static void calculateChecksum(Block block) {
 		byte checkSum = 0x00;
 		
@@ -242,7 +260,5 @@ public class BlockController {
 			default:
 				break;
 		}
-		serializeSaveType(block);
-		calculateChecksum(block);
 	}
 }

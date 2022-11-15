@@ -5,6 +5,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 
+import it.pyrox.jammer.core.controller.BlockController;
 import it.pyrox.jammer.core.model.Block;
 import it.pyrox.jammer.core.model.MemoryCard;
 
@@ -23,6 +24,7 @@ public class MemoryCardWriter {
 		recreateSignature(rawMemoryCard);
 		for (int slotNumber = 0; slotNumber < Constants.NUM_BLOCKS; slotNumber++) {
 			Block tmpBlock = memoryCard.getBlockAt(slotNumber);
+			BlockController.serialize(tmpBlock);
 			for (int currentByte = 0; currentByte < Constants.HEADER_SIZE; currentByte++) {
 				rawMemoryCard[Constants.HEADER_SIZE + (slotNumber * Constants.HEADER_SIZE) + currentByte] = tmpBlock.getHeader()[currentByte];
 			}

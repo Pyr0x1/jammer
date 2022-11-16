@@ -27,23 +27,23 @@
 		<menus>
 			<Menu text="%menu.file">
 	            <items>
-	            	<Menu text="%menu.load">
-	            		<MenuItem text="%menu.slot.1" onAction="#loadMemoryCard1"/>
-	            		<MenuItem text="%menu.slot.2" onAction="#loadMemoryCard2"/>
+	            	<Menu fx:id="menuLoad" text="%menu.load">
+	            		<MenuItem fx:id="menuItemLoadSlot1" text="%menu.slot.1" onAction="#loadMemoryCard1"/>
+	            		<MenuItem fx:id="menuItemLoadSlot2" text="%menu.slot.2" onAction="#loadMemoryCard2"/>
 	            	</Menu>	
-	            	<Menu text="%menu.save">
-	            		<MenuItem text="%menu.slot.1" onAction="#saveMemoryCard1"/>
-	            		<MenuItem text="%menu.slot.2" onAction="#saveMemoryCard2"/>
+	            	<Menu fx:id="menuSave" text="%menu.save">
+	            		<MenuItem fx:id="menuItemSaveSlot1" text="%menu.slot.1" onAction="#saveMemoryCard1"/>
+	            		<MenuItem fx:id="menuItemSaveSlot2" text="%menu.slot.2" onAction="#saveMemoryCard2"/>
 	            	</Menu>               
 	               	<SeparatorMenuItem  />
 	               	<MenuItem text="%menu.exit" onAction="#exit"/>
 	            </items>
 	         </Menu>
-	         <Menu text="%menu.edit">
+	         <Menu fx:id="menuEdit" text="%menu.edit">
 	            <items>
 	            	<Menu text="%menu.defrag">
-	            		<MenuItem text="%menu.slot.1" onAction="#defragMemoryCard1"/>
-	            		<MenuItem text="%menu.slot.2" onAction="#defragMemoryCard2"/>
+	            		<MenuItem fx:id="menuItemDefragSlot1" text="%menu.slot.1" onAction="#defragMemoryCard1"/>
+	            		<MenuItem fx:id="menuItemDefragSlot2" text="%menu.slot.2" onAction="#defragMemoryCard2"/>
 	            	</Menu>		            	
 	            </items>
 	         </Menu>

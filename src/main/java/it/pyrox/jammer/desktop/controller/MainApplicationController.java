@@ -26,6 +26,8 @@ import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.Label;
+import javafx.scene.control.Menu;
+import javafx.scene.control.MenuItem;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseButton;
@@ -42,6 +44,33 @@ public class MainApplicationController implements Initializable {
 	
 	@FXML
 	private VBox container;
+	
+	@FXML
+	private Menu menuLoad;
+	
+	@FXML
+	private MenuItem menuItemLoadSlot1;
+	
+	@FXML
+	private MenuItem menuItemLoadSlot2;
+	
+	@FXML
+	private Menu menuSave;
+	
+	@FXML
+	private MenuItem menuItemSaveSlot1;
+	
+	@FXML
+	private MenuItem menuItemSaveSlot2;
+	
+	@FXML
+	private Menu menuEdit;
+	
+	@FXML
+	private MenuItem menuItemDefragSlot1;
+	
+	@FXML
+	private MenuItem menuItemDefragSlot2;
 	
 	@FXML
 	private TilePane tilePane1;
@@ -102,6 +131,7 @@ public class MainApplicationController implements Initializable {
 		for (Node node : tilePane2.getChildren()) {
 			imageViewPaneMap.put(node.getId(), (StackPane) node);
 		}
+		disableMenus();
 		disableAllButtons();
 	}
 	
@@ -222,6 +252,7 @@ public class MainApplicationController implements Initializable {
 			e.printStackTrace();
 		}
 		loadMemoryCardBlocks(memoryCardTmp, tilePaneTmp);
+		enableMenus(memoryCardSlot);
 	}
 	
 	private void saveMemoryCard(int memoryCardSlot) {
@@ -462,6 +493,28 @@ public class MainApplicationController implements Initializable {
 		formatButton.setDisable(true);
 		copyButton.setDisable(true);
 		copyAllButton.setDisable(true);
+	}
+	
+	private void disableMenus() {
+		menuItemSaveSlot1.setDisable(true);
+		menuItemSaveSlot2.setDisable(true);
+		menuSave.setDisable(true);
+		menuItemDefragSlot1.setDisable(true);
+		menuItemDefragSlot2.setDisable(true);
+		menuEdit.setDisable(true);
+	}
+	
+	private void enableMenus(int slot) {
+		menuSave.setDisable(false);
+		menuEdit.setDisable(false);
+		if (slot == 1) {
+			menuItemSaveSlot1.setDisable(false);
+			menuItemDefragSlot1.setDisable(false);
+		}
+		else {
+			menuItemSaveSlot2.setDisable(false);
+			menuItemDefragSlot2.setDisable(false);
+		}
 	}
 	
 	private void toggleDeleteRestoreButtons(boolean isDeleted) {

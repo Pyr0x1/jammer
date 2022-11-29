@@ -47,6 +47,11 @@
 	            	</Menu>		            	
 	            </items>
 	         </Menu>
+	         <Menu text="%menu.help">
+	            <items>
+            		<MenuItem text="%menu.about" onAction="#showAboutDialog"/>            		            		            
+	            </items>
+	         </Menu>
 		</menus>
 	</MenuBar>
 	

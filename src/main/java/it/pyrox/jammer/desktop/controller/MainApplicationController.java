@@ -38,6 +38,7 @@ import javafx.scene.layout.TilePane;
 import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
+import javafx.stage.StageStyle;
 import javafx.stage.WindowEvent;
 
 public class MainApplicationController implements Initializable {
@@ -301,6 +302,15 @@ public class MainApplicationController implements Initializable {
 
 		Optional<ButtonType> result = alert.showAndWait();
 		return result.get() == ButtonType.OK;
+	}
+	
+	public void showAboutDialog() {
+		ResourceBundle bundle = ResourceBundle.getBundle(Constants.LOCALE_FILE, Locale.getDefault());
+		Alert alert = new Alert(AlertType.INFORMATION);		
+		alert.setTitle(bundle.getString("dialog.about.title"));
+		alert.setHeaderText(bundle.getString("app.name"));
+		alert.setContentText(bundle.getString("dialog.about.content"));
+		alert.showAndWait();
 	}
 	
 	private void loadMemoryCardBlocks(MemoryCard memoryCard, TilePane tilePane) {

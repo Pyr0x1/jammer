@@ -100,6 +100,35 @@ public class MemoryCardController {
 		return linkedBlockList;
 	}
 	
+	public static int findFirstEnoughContiguousEmptyBlocks(MemoryCard memoryCard, int neededBlocksSize) {
+		int minContiguousEmptyBlocksFirstIndex = -1;
+		int minContiguousEmptyBlocksSize = Constants.NUM_BLOCKS;
+		int tmpContiguousEmptyBlocksFirstIndex = -1;
+		int tmpContiguousEmptyBlocksSize = 0;
+		
+		if (memoryCard != null) {
+			Block[] blocks = memoryCard.getBlocks();
+			for (Block block : blocks) {
+				int currentIndex = block.getIndex();
+				if (SaveTypeEnum.FORMATTED.equals(block.getSaveType())) {
+					if (currentIndex == 0 || !SaveTypeEnum.FORMATTED.equals(memoryCard.getBlockAt(currentIndex - 1).getSaveType())) {						
+						tmpContiguousEmptyBlocksFirstIndex = currentIndex;
+					}
+					tmpContiguousEmptyBlocksSize++;
+				}
+				if (!SaveTypeEnum.FORMATTED.equals(block.getSaveType()) || currentIndex == Constants.NUM_BLOCKS - 1) {
+					if (tmpContiguousEmptyBlocksSize >= neededBlocksSize && tmpContiguousEmptyBlocksSize < minContiguousEmptyBlocksSize) {
+						minContiguousEmptyBlocksFirstIndex = tmpContiguousEmptyBlocksFirstIndex;
+						minContiguousEmptyBlocksSize = tmpContiguousEmptyBlocksSize;
+					}
+					tmpContiguousEmptyBlocksFirstIndex = -1;
+					tmpContiguousEmptyBlocksSize = 0;
+				}
+			}
+		}
+		return minContiguousEmptyBlocksFirstIndex;
+	}
+	
 	// Modified bubble sort to perform also update of link index
 	public static void defrag(MemoryCard memoryCard) {
 		if (memoryCard != null) {

@@ -1,14 +1,13 @@
 package it.pyrox.jammer.core.controller;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNotSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import java.io.BufferedInputStream;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.List;
 
 import org.junit.jupiter.api.Test;
@@ -634,5 +633,111 @@ public class MemoryCardControllerTest {
 		assertNotNull(memoryCard);
 		assertNotNull(memoryCard.getBlocks());
 		assertEquals(-1, result);
+	}
+	
+	@Test
+	public void testMemoryCardDeepCopy() throws IOException {
+		File inputFile = new File(getClass().getClassLoader().getResource("Memorycard3.mcr").getFile());
+		MemoryCard memoryCard = MemoryCardController.getInstance(inputFile);			
+		System.out.println("Before:");
+		System.out.println(memoryCard);			               
+		assertNotNull(memoryCard);
+		assertNotNull(memoryCard.getBlocks());
+		MemoryCard output = MemoryCardController.deepCopy(memoryCard);					
+		System.out.println("After:");
+		System.out.println(output);		
+		assertNotNull(output);
+		assertNotSame(memoryCard.getBlockAt(0), output.getBlockAt(0));
+		// Test details only for the first block		
+		assertDeepCopiedBlockIsOk(memoryCard.getBlockAt(0), output.getBlockAt(0));
+		assertNotSame(memoryCard.getBlockAt(1), output.getBlockAt(1));
+		assertNotSame(memoryCard.getBlockAt(2), output.getBlockAt(2));
+		assertNotSame(memoryCard.getBlockAt(3), output.getBlockAt(3));
+		assertNotSame(memoryCard.getBlockAt(4), output.getBlockAt(4));
+		assertNotSame(memoryCard.getBlockAt(5), output.getBlockAt(5));
+		assertNotSame(memoryCard.getBlockAt(6), output.getBlockAt(6));
+		assertNotSame(memoryCard.getBlockAt(7), output.getBlockAt(7));
+		assertNotSame(memoryCard.getBlockAt(8), output.getBlockAt(8));
+		assertNotSame(memoryCard.getBlockAt(9), output.getBlockAt(9));
+		assertNotSame(memoryCard.getBlockAt(10), output.getBlockAt(10));
+		assertNotSame(memoryCard.getBlockAt(11), output.getBlockAt(11));
+		assertNotSame(memoryCard.getBlockAt(12), output.getBlockAt(12));
+		assertNotSame(memoryCard.getBlockAt(13), output.getBlockAt(13));
+		assertNotSame(memoryCard.getBlockAt(14), output.getBlockAt(14));
+	}
+	
+	@Test
+	public void testCopyBlocksWithSingleSlot() throws IOException {
+		File inputFileSource = new File(getClass().getClassLoader().getResource("Memorycard1.mcr").getFile());
+		MemoryCard memoryCardSource = MemoryCardController.getInstance(inputFileSource);			
+		System.out.println("Before MC1:");
+		System.out.println(memoryCardSource);			               
+		assertNotNull(memoryCardSource);
+		assertNotNull(memoryCardSource.getBlocks());		
+		File inputFileDest = new File(getClass().getClassLoader().getResource("Memorycard2.mcr").getFile());
+		MemoryCard memoryCardDest = MemoryCardController.getInstance(inputFileDest);			
+		System.out.println("Before MC2:");
+		System.out.println(memoryCardDest);			               
+		assertNotNull(memoryCardDest);
+		assertNotNull(memoryCardDest.getBlocks());
+		MemoryCardController.copyLinkedBlocks(memoryCardSource, memoryCardDest, 0);
+		System.out.println("After MC2:");
+		System.out.println(memoryCardDest);
+		assertDeepCopiedBlockIsOkNoIndices(memoryCardSource.getBlockAt(0), memoryCardDest.getBlockAt(1));				
+		assertEquals(1, memoryCardDest.getBlockAt(1).getIndex());		
+		assertEquals(255, memoryCardDest.getBlockAt(1).getNextLinkIndex());
+	}
+	
+	@Test
+	public void testCopyBlocksWithMultipleSlots() throws IOException {
+		File inputFileSource = new File(getClass().getClassLoader().getResource("Memorycard3.mcr").getFile());
+		MemoryCard memoryCardSource = MemoryCardController.getInstance(inputFileSource);			
+		System.out.println("Before MC1:");
+		System.out.println(memoryCardSource);			               
+		assertNotNull(memoryCardSource);
+		assertNotNull(memoryCardSource.getBlocks());		
+		File inputFileDest = new File(getClass().getClassLoader().getResource("Memorycard2.mcr").getFile());
+		MemoryCard memoryCardDest = MemoryCardController.getInstance(inputFileDest);			
+		System.out.println("Before MC2:");
+		System.out.println(memoryCardDest);			               
+		assertNotNull(memoryCardDest);
+		assertNotNull(memoryCardDest.getBlocks());
+		MemoryCardController.copyLinkedBlocks(memoryCardSource, memoryCardDest, 1);
+		System.out.println("After MC2:");
+		System.out.println(memoryCardDest);
+		assertDeepCopiedBlockIsOkNoIndices(memoryCardSource.getBlockAt(1), memoryCardDest.getBlockAt(1));				
+		assertEquals(1, memoryCardDest.getBlockAt(1).getIndex());		
+		assertEquals(2, memoryCardDest.getBlockAt(1).getNextLinkIndex());
+		assertDeepCopiedBlockIsOkNoIndices(memoryCardSource.getBlockAt(2), memoryCardDest.getBlockAt(2));			
+		assertEquals(2, memoryCardDest.getBlockAt(2).getIndex());		
+		assertEquals(255, memoryCardDest.getBlockAt(2).getNextLinkIndex());
+	}
+	
+	private void assertDeepCopiedBlockIsOkNoIndices(Block source, Block dest) {			
+		assertEquals(source.getCountryCode(), dest.getCountryCode());
+		assertNotSame(source.getProductCode(), dest.getProductCode());
+		assertEquals(source.getProductCode(), dest.getProductCode());
+		assertNotSame(source.getIdentifier(), dest.getIdentifier());
+		assertEquals(source.getIdentifier(), dest.getIdentifier());
+		assertNotSame(source.getTitle(), dest.getTitle());
+		assertEquals(source.getTitle(), dest.getTitle());		
+		assertEquals(source.getSaveType(), dest.getSaveType());		
+		assertEquals(source.getSaveSize(), dest.getSaveSize());		
+		assertEquals(source.getNumFrames(), dest.getNumFrames());
+		assertNotSame(source.getColorPalette(), dest.getColorPalette());
+		assertEquals(true, Arrays.equals(source.getColorPalette(), dest.getColorPalette()));
+		for (int i = 0; i < source.getColorPalette().length; i++) {
+			assertNotSame(source.getColorPalette()[i], dest.getColorPalette()[i]);
+		}
+		assertNotSame(source.getIcons(), dest.getIcons());
+		// BufferedImage doesn't implement equals(), so this will always be false, should implement a custom method
+//		assertEquals(true, Arrays.equals(source.getIcons(), dest.getIcons()));
+	}
+	
+	private void assertDeepCopiedBlockIsOk(Block source, Block dest) {
+		assertDeepCopiedBlockIsOkNoIndices(source, dest);
+		assertEquals(source.getRawIndex(), dest.getRawIndex());		
+		assertEquals(source.getIndex(), dest.getIndex());		
+		assertEquals(source.getNextLinkIndex(), dest.getNextLinkIndex());	
 	}
 }

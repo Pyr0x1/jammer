@@ -2,6 +2,7 @@ package it.pyrox.jammer.core.controller;
 
 import java.awt.Color;
 import java.awt.image.BufferedImage;
+import java.awt.image.ColorModel;
 import java.awt.image.WritableRaster;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
@@ -171,12 +172,12 @@ public class BlockController {
 		int numFrames = block.getNumFrames();
 		BufferedImage[] icons = new BufferedImage[numFrames];
 		for (int iconNumber = 0; iconNumber < numFrames; iconNumber++) {
-			icons[iconNumber] = new BufferedImage(16, 16, BufferedImage.TYPE_INT_RGB);
+			icons[iconNumber] = new BufferedImage(Constants.ICON_SIZE, Constants.ICON_SIZE, BufferedImage.TYPE_INT_RGB);
 			int byteCount = Constants.HEADER_SIZE + (Constants.HEADER_SIZE * iconNumber);
 			int[][] pixelsMat = new int[16][16];
 			byte colorIndex = 0;
-            for (int y = 0; y < 16; y++) {
-                for (int x = 0; x < 16; x += 2) {
+            for (int y = 0; y < Constants.ICON_SIZE; y++) {
+                for (int x = 0; x < Constants.ICON_SIZE; x += 2) {
                 	colorIndex = (byte) (block.getSave()[byteCount] & 0xF);
                     pixelsMat[x][y] = block.getColorPalette()[colorIndex].getRGB();
                     colorIndex = (byte) ((block.getSave()[byteCount] >> 4) & 0xF);
@@ -184,16 +185,16 @@ public class BlockController {
                     byteCount++;
                 }
             }
-            int[] pixelArray = new int[16 * 16];
+            int[] pixelArray = new int[Constants.ICON_SIZE * Constants.ICON_SIZE];
             int k = 0;
-            for (int i = 0; i < 16; i++) {
-            	for (int j = 0; j < 16; j++) {
+            for (int i = 0; i < Constants.ICON_SIZE; i++) {
+            	for (int j = 0; j < Constants.ICON_SIZE; j++) {
             		pixelArray[k] = pixelsMat[j][i];
             		k++;
             	}
             }
             WritableRaster raster = icons[iconNumber].getRaster();
-            raster.setDataElements(0, 0, 16, 16, pixelArray);
+            raster.setDataElements(0, 0, Constants.ICON_SIZE, Constants.ICON_SIZE, pixelArray);
 		}
 		return icons;
 	}
@@ -260,5 +261,36 @@ public class BlockController {
 			default:
 				break;
 		}
+	}
+	
+	public static Block deepCopy(Block source) {
+		Block block = null;
+		if (source != null) {
+			block = new Block(source.getHeader().clone(), source.getSave().clone());
+			block.setIndex(source.getIndex());
+			block.setNextLinkIndex(source.getNextLinkIndex());
+			block.setCountryCode(source.getCountryCode());
+			block.setProductCode(new String(source.getProductCode()));
+			block.setIdentifier(new String(source.getIdentifier()));
+			block.setSaveType(source.getSaveType());
+			block.setSaveSize(source.getSaveSize());
+			block.setRawIndex(source.getRawIndex());
+			block.setTitle(new String(source.getTitle()));
+			block.setNumFrames(source.getNumFrames());
+			Color[] colorPaletteCopy = new Color[source.getColorPalette().length];
+			for (int i = 0 ; i < source.getColorPalette().length; i++) {
+				colorPaletteCopy[i] = new Color(source.getColorPalette()[i].getRGB());
+			}
+			block.setColorPalette(colorPaletteCopy);
+			BufferedImage[] iconsCopy = new BufferedImage[source.getIcons().length];
+			for (int i = 0 ; i < source.getIcons().length; i++) {
+				ColorModel cm = source.getIcons()[i].getColorModel();
+				boolean isAlphaPremultiplied = cm.isAlphaPremultiplied();
+				WritableRaster raster = source.getIcons()[i].copyData(null);
+				iconsCopy[i] = new BufferedImage(cm, raster, isAlphaPremultiplied, null);
+			}
+			block.setIcons(iconsCopy);
+		}
+		return block;
 	}
 }

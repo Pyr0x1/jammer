@@ -100,7 +100,7 @@ public class MemoryCardController {
 		return linkedBlockList;
 	}
 	
-	public static int findFirstEnoughContiguousEmptyBlocks(MemoryCard memoryCard, int neededBlocksSize) {
+	protected static int findFirstEnoughContiguousEmptyBlocks(MemoryCard memoryCard, int neededBlocksSize) {
 		int minContiguousEmptyBlocksFirstIndex = -1;
 		int minContiguousEmptyBlocksSize = Constants.NUM_BLOCKS;
 		int tmpContiguousEmptyBlocksFirstIndex = -1;
@@ -144,6 +144,33 @@ public class MemoryCardController {
 				}
 			}
 		}
+	}
+	
+	public static void copyLinkedBlocks(MemoryCard source, MemoryCard destination, int startingIndexToCopy) {
+		if (source != null && destination != null && startingIndexToCopy >= 0 && startingIndexToCopy < Constants.NUM_BLOCKS) {
+			List<Block> linkedBlocks = findLinkedBlocks(source, startingIndexToCopy);
+			int indexToCopyAt = findFirstEnoughContiguousEmptyBlocks(destination, linkedBlocks.size());
+			for (int i = 0; i < linkedBlocks.size(); i++) {
+				Block blockCopy = BlockController.deepCopy(linkedBlocks.get(i));
+				blockCopy.setIndex(indexToCopyAt + i);
+				// At the moment the copy manages only contiguous free blocks, so the next index will be current + 1
+				// Don't update last linked block next index because it will already be ok
+				if (i < linkedBlocks.size() - 1) {
+					blockCopy.setNextLinkIndex(indexToCopyAt + i + 1);
+				}
+				destination.setBlockAt(indexToCopyAt + i, blockCopy);
+			}
+		}
+	}
+	
+	public static MemoryCard deepCopy(MemoryCard source) {
+		MemoryCard memoryCard = new MemoryCard();
+		if (source != null) {
+			for (Block block : source.getBlocks()) {
+				memoryCard.setBlockAt(block.getIndex(), BlockController.deepCopy(block));
+			}
+		}
+		return memoryCard;
 	}
 	
 	private static void swapBlocksAndUpdateLinks(Block[] blocks, Block b1, Block b2, int index1, int index2) {		

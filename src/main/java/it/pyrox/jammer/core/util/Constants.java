@@ -12,6 +12,7 @@ public final class Constants {
 	public static final int MAX_CARDS = 4;
 	public static final String SHIFT_JIS = "Shift_JIS";
 	public static final int ICON_UPDATE_TIME = 250;
+	public static final int ICON_SIZE = 16;
 	
 	private Constants() {} // Prevents undesired inheritance
 }

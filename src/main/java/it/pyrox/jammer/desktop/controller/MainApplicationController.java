@@ -12,6 +12,7 @@ import java.util.ResourceBundle;
 
 import it.pyrox.jammer.core.controller.MemoryCardController;
 import it.pyrox.jammer.core.enums.SaveTypeEnum;
+import it.pyrox.jammer.core.exception.NotEnoughSpaceException;
 import it.pyrox.jammer.core.model.Block;
 import it.pyrox.jammer.core.model.MemoryCard;
 import it.pyrox.jammer.desktop.util.Constants;
@@ -191,6 +192,20 @@ public class MainApplicationController implements Initializable {
 	}
 	
 	@FXML
+	private void copySaveFile(final ActionEvent event) {
+		if (selectedBlocks != null && !selectedBlocks.isEmpty()) {
+			MemoryCard destinationMemoryCard = selectedMemoryCard.equals(memoryCard1) ? memoryCard2 : memoryCard1;
+			try {
+				MemoryCardController.copyLinkedBlocks(selectedMemoryCard, destinationMemoryCard, selectedBlocks.get(0).getIndex());
+				loadMemoryCardBlocks(destinationMemoryCard, destinationMemoryCard.equals(memoryCard1) ? tilePane1 : tilePane2);
+				isMemoryCardChanged = true;
+			} catch (NotEnoughSpaceException e) {
+				showNotEnoughSpaceErrorDialog();
+			}
+		}
+	}
+	
+	@FXML
 	private void defragMemoryCard1(final ActionEvent event) {
 		defragMemoryCard(1);
 	}
@@ -310,6 +325,16 @@ public class MainApplicationController implements Initializable {
 		alert.setTitle(bundle.getString("dialog.about.title"));
 		alert.setHeaderText(bundle.getString("app.name"));
 		alert.setContentText(bundle.getString("dialog.about.content"));
+		alert.showAndWait();
+	}
+	
+	public void showNotEnoughSpaceErrorDialog() {
+		ResourceBundle bundle = ResourceBundle.getBundle(Constants.LOCALE_FILE, Locale.getDefault());
+		Alert alert = new Alert(AlertType.ERROR);
+		alert.setTitle(bundle.getString("dialog.error.title"));
+		alert.setHeaderText(bundle.getString("dialog.error.no.space.header"));
+		alert.setContentText(bundle.getString("dialog.error.no.space.content"));
+
 		alert.showAndWait();
 	}
 	

@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import it.pyrox.jammer.core.enums.SaveTypeEnum;
+import it.pyrox.jammer.core.exception.NotEnoughSpaceException;
 import it.pyrox.jammer.core.model.Block;
 import it.pyrox.jammer.core.model.MemoryCard;
 import it.pyrox.jammer.core.util.BlockDefragComparator;
@@ -146,19 +147,24 @@ public class MemoryCardController {
 		}
 	}
 	
-	public static void copyLinkedBlocks(MemoryCard source, MemoryCard destination, int startingIndexToCopy) {
+	public static void copyLinkedBlocks(MemoryCard source, MemoryCard destination, int startingIndexToCopy) throws NotEnoughSpaceException {
 		if (source != null && destination != null && startingIndexToCopy >= 0 && startingIndexToCopy < Constants.NUM_BLOCKS) {
 			List<Block> linkedBlocks = findLinkedBlocks(source, startingIndexToCopy);
 			int indexToCopyAt = findFirstEnoughContiguousEmptyBlocks(destination, linkedBlocks.size());
-			for (int i = 0; i < linkedBlocks.size(); i++) {
-				Block blockCopy = BlockController.deepCopy(linkedBlocks.get(i));
-				blockCopy.setIndex(indexToCopyAt + i);
-				// At the moment the copy manages only contiguous free blocks, so the next index will be current + 1
-				// Don't update last linked block next index because it will already be ok
-				if (i < linkedBlocks.size() - 1) {
-					blockCopy.setNextLinkIndex(indexToCopyAt + i + 1);
+			if (indexToCopyAt >= 0) {
+				for (int i = 0; i < linkedBlocks.size(); i++) {
+					Block blockCopy = BlockController.deepCopy(linkedBlocks.get(i));
+					blockCopy.setIndex(indexToCopyAt + i);
+					// At the moment the copy manages only contiguous free blocks, so the next index will be current + 1
+					// Don't update last linked block next index because it will already be ok
+					if (i < linkedBlocks.size() - 1) {
+						blockCopy.setNextLinkIndex(indexToCopyAt + i + 1);
+					}
+					destination.setBlockAt(indexToCopyAt + i, blockCopy);
 				}
-				destination.setBlockAt(indexToCopyAt + i, blockCopy);
+			}
+			else {
+				throw new NotEnoughSpaceException();
 			}
 		}
 	}

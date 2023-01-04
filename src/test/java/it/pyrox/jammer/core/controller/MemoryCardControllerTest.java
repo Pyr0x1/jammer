@@ -13,6 +13,7 @@ import java.util.List;
 import org.junit.jupiter.api.Test;
 
 import it.pyrox.jammer.core.enums.SaveTypeEnum;
+import it.pyrox.jammer.core.exception.NotEnoughSpaceException;
 import it.pyrox.jammer.core.model.Block;
 import it.pyrox.jammer.core.model.MemoryCard;
 
@@ -667,7 +668,7 @@ public class MemoryCardControllerTest {
 	}
 	
 	@Test
-	public void testCopyBlocksWithSingleSlot() throws IOException {
+	public void testCopyBlocksWithSingleSlot() throws IOException, NotEnoughSpaceException {
 		File inputFileSource = new File(getClass().getClassLoader().getResource("Memorycard1.mcr").getFile());
 		MemoryCard memoryCardSource = MemoryCardController.getInstance(inputFileSource);			
 		System.out.println("Before MC1:");
@@ -689,7 +690,7 @@ public class MemoryCardControllerTest {
 	}
 	
 	@Test
-	public void testCopyBlocksWithMultipleSlots() throws IOException {
+	public void testCopyBlocksWithMultipleSlots() throws IOException, NotEnoughSpaceException {
 		File inputFileSource = new File(getClass().getClassLoader().getResource("Memorycard3.mcr").getFile());
 		MemoryCard memoryCardSource = MemoryCardController.getInstance(inputFileSource);			
 		System.out.println("Before MC1:");

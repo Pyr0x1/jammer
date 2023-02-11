@@ -62,6 +62,27 @@ public class MemoryCardController {
 		}
 	}
 	
+	/**
+	 * Checks if all blocks in the memory card are formatted
+	 * 
+	 * @param memoryCard
+	 * @return
+	 */
+	private static boolean isMemoryCardFormatted(MemoryCard memoryCard) {
+		boolean result = true;
+		
+		if (memoryCard != null) {
+			for (Block block : memoryCard.getBlocks()) {
+				if (!SaveTypeEnum.FORMATTED.equals(block.getSaveType())) {
+					result = false;
+					break;
+				}
+			}
+		}
+		
+		return result;
+	}
+	
 	public static void toggleSaveTypeDeleted(MemoryCard memoryCard, int blockIndex) {
 		if (memoryCard != null) {
 			List<Block> linkedBlocks = findLinkedBlocks(memoryCard, blockIndex);
@@ -161,6 +182,20 @@ public class MemoryCardController {
 						blockCopy.setNextLinkIndex(indexToCopyAt + i + 1);
 					}
 					destination.setBlockAt(indexToCopyAt + i, blockCopy);
+				}
+			}
+			else {
+				throw new NotEnoughSpaceException();
+			}
+		}
+	}
+	
+	public static void copyAllBlocks(MemoryCard source, MemoryCard destination) throws NotEnoughSpaceException {
+		if (source != null && destination != null) {			
+			if (isMemoryCardFormatted(destination)) {
+				for (int i = 0; i < source.getBlocks().length; i++) {
+					Block blockCopy = BlockController.deepCopy(source.getBlocks()[i]);					
+					destination.setBlockAt(i, blockCopy);
 				}
 			}
 			else {

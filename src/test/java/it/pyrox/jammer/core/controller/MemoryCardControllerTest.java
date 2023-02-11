@@ -3,6 +3,7 @@ package it.pyrox.jammer.core.controller;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNotSame;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.File;
@@ -712,6 +713,53 @@ public class MemoryCardControllerTest {
 		assertDeepCopiedBlockIsOkNoIndices(memoryCardSource.getBlockAt(2), memoryCardDest.getBlockAt(2));			
 		assertEquals(2, memoryCardDest.getBlockAt(2).getIndex());		
 		assertEquals(255, memoryCardDest.getBlockAt(2).getNextLinkIndex());
+	}
+	
+	@Test
+	public void testCopyAllBlocksIfNoEmptyTargetCardThenException() throws IOException {
+		File inputFileSource = new File(getClass().getClassLoader().getResource("Memorycard3.mcr").getFile());
+		MemoryCard memoryCardSource = MemoryCardController.getInstance(inputFileSource);		
+		System.out.println("Before MC1:");
+		System.out.println(memoryCardSource);
+		assertNotNull(memoryCardSource);
+		assertNotNull(memoryCardSource.getBlocks());
+		File inputFileDest = new File(getClass().getClassLoader().getResource("Memorycard2.mcr").getFile());
+		MemoryCard memoryCardDest = MemoryCardController.getInstance(inputFileDest);					
+		System.out.println("Before MC2:");
+		System.out.println(memoryCardDest);			               
+		assertNotNull(memoryCardDest);
+		assertNotNull(memoryCardDest.getBlocks());
+		assertEquals(SaveTypeEnum.INITIAL, memoryCardDest.getBlockAt(0).getSaveType());
+		assertThrows(NotEnoughSpaceException.class, () -> {
+			MemoryCardController.copyAllBlocks(memoryCardSource, memoryCardDest);
+		});
+	}
+	
+	@Test
+	public void testCopyAllBlocksIfEmptyTargetCardThenOk() throws IOException, NotEnoughSpaceException {
+		File inputFileSource = new File(getClass().getClassLoader().getResource("Memorycard3.mcr").getFile());
+		MemoryCard memoryCardSource = MemoryCardController.getInstance(inputFileSource);		
+		System.out.println("Before MC1:");
+		System.out.println(memoryCardSource);
+		assertNotNull(memoryCardSource);
+		assertNotNull(memoryCardSource.getBlocks());
+		File inputFileDest = new File(getClass().getClassLoader().getResource("Memorycard_formatted.mcr").getFile());
+		MemoryCard memoryCardDest = MemoryCardController.getInstance(inputFileDest);					
+		System.out.println("Before MC2:");
+		System.out.println(memoryCardDest);			               
+		assertNotNull(memoryCardDest);
+		assertNotNull(memoryCardDest.getBlocks());
+		for (int i = 0; i < memoryCardDest.getBlocks().length; i++) {
+			assertEquals(SaveTypeEnum.FORMATTED, memoryCardDest.getBlockAt(10).getSaveType());
+		}
+		MemoryCardController.copyAllBlocks(memoryCardSource, memoryCardDest);
+		System.out.println("After MC2:");
+		System.out.println(memoryCardDest);			               
+		assertNotNull(memoryCardDest);
+		assertNotNull(memoryCardDest.getBlocks());
+		for (int i = 0; i < memoryCardDest.getBlocks().length; i++) {
+			assertDeepCopiedBlockIsOk(memoryCardSource.getBlockAt(i), memoryCardDest.getBlockAt(i));
+		}
 	}
 	
 	private void assertDeepCopiedBlockIsOkNoIndices(Block source, Block dest) {			

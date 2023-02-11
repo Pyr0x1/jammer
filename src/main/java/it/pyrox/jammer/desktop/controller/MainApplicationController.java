@@ -206,6 +206,20 @@ public class MainApplicationController implements Initializable {
 	}
 	
 	@FXML
+	private void copyAllSaveFiles(final ActionEvent event) {
+		if (selectedBlocks != null && !selectedBlocks.isEmpty()) {
+			MemoryCard destinationMemoryCard = selectedMemoryCard.equals(memoryCard1) ? memoryCard2 : memoryCard1;
+			try {
+				MemoryCardController.copyAllBlocks(selectedMemoryCard, destinationMemoryCard);
+				loadMemoryCardBlocks(destinationMemoryCard, destinationMemoryCard.equals(memoryCard1) ? tilePane1 : tilePane2);
+				isMemoryCardChanged = true;
+			} catch (NotEnoughSpaceException e) {
+				showNotEnoughSpaceErrorDialog();
+			}
+		}
+	}
+	
+	@FXML
 	private void defragMemoryCard1(final ActionEvent event) {
 		defragMemoryCard(1);
 	}

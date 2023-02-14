@@ -214,7 +214,7 @@
 				<Insets top="5" bottom="5"/>
 			</padding>
 			<Button fx:id="copyButton" text="%button.copy" maxWidth="Infinity" onAction="#copySaveFile"/>
-			<Button fx:id="copyAllButton" text="%button.copy.all" maxWidth="Infinity" onAction="#copyAllSaveFiles"/>
+			<Button fx:id="copyAllButton" text="%button.copy.all" maxWidth="Infinity" onAction="#copyAllSaveFiles" visible="false" managed="false"/>
 			<Button fx:id="deleteButton" text="%button.delete" maxWidth="Infinity" onAction="#deleteSaveFile"/>
 			<Button fx:id="restoreButton" text="%button.restore" maxWidth="Infinity" onAction="#restoreSaveFile"/>
 			<Button fx:id="formatButton" text="%button.format" maxWidth="Infinity" onAction="#formatSaveFile"/>

@@ -181,6 +181,7 @@ public class MainApplicationController implements Initializable {
 						imagePane.setOnMouseClicked(null);
 						ImageView imageView = (ImageView) imagePane.getChildren().get(0);
 						imageView.setImage(getDefaultImage());
+						toggleImageOpacity(imageView, false);
 					}
 				}			
 				MemoryCardController.format(selectedMemoryCard, selectedBlocks.get(0).getIndex());

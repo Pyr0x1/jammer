@@ -114,7 +114,9 @@ public class MainApplicationController implements Initializable {
 	
 	private File memoryCard2File;
 	
-	private boolean isMemoryCardChanged;
+	private boolean isMemoryCard1Changed;
+	
+	private boolean isMemoryCard2Changed;
 		
 	private String lastFileChooserDirectory;
 	
@@ -186,7 +188,7 @@ public class MainApplicationController implements Initializable {
 				MemoryCardController.format(selectedMemoryCard, selectedBlocks.get(0).getIndex());
 				formatButton.setDisable(true);
 				selectedBlocks = null;
-				isMemoryCardChanged = true;
+				setMemoryCardChanged(selectedMemoryCard, true);
 			}
 		}
 	}
@@ -198,7 +200,7 @@ public class MainApplicationController implements Initializable {
 			try {
 				MemoryCardController.copyLinkedBlocks(selectedMemoryCard, destinationMemoryCard, selectedBlocks.get(0).getIndex());
 				loadMemoryCardBlocks(destinationMemoryCard, destinationMemoryCard.equals(memoryCard1) ? tilePane1 : tilePane2);
-				isMemoryCardChanged = true;
+				setMemoryCardChanged(selectedMemoryCard, true);
 			} catch (NotEnoughSpaceException e) {
 				showNotEnoughSpaceErrorDialog();
 			}
@@ -212,7 +214,7 @@ public class MainApplicationController implements Initializable {
 			try {
 				MemoryCardController.copyAllBlocks(selectedMemoryCard, destinationMemoryCard);
 				loadMemoryCardBlocks(destinationMemoryCard, destinationMemoryCard.equals(memoryCard1) ? tilePane1 : tilePane2);
-				isMemoryCardChanged = true;
+				setMemoryCardChanged(selectedMemoryCard, true);
 			} catch (NotEnoughSpaceException e) {
 				showNotEnoughSpaceErrorDialog();
 			}
@@ -238,7 +240,7 @@ public class MainApplicationController implements Initializable {
 	
 	public void setStageCloseHandler() {
 		stage.setOnCloseRequest(event -> {
-			if (isMemoryCardChanged && !isExitConfirmationDialogWithChangesOk()) {
+			if ((isMemoryCard1Changed || isMemoryCard2Changed) && !isExitConfirmationDialogWithChangesOk()) {
 				event.consume();
 			}
 		});
@@ -256,12 +258,12 @@ public class MainApplicationController implements Initializable {
 				}
 			}
 			toggleDeleteRestoreButtons(isDelete);
-			isMemoryCardChanged = true;
+			setMemoryCardChanged(selectedMemoryCard, true);
 		}
 	}
 	
 	private void loadMemoryCard(int memoryCardSlot) {
-		if (!isMemoryCardChanged || isLoadConfirmationDialogOk()) {
+		if ((memoryCardSlot == 1 && !isMemoryCard1Changed || memoryCardSlot == 2 && !isMemoryCard2Changed) || isLoadConfirmationDialogOk()) {
 			TilePane tilePaneTmp = memoryCardSlot == 1 ? tilePane1 : tilePane2;
 			File file = openFileChooserDialogAndGetFile();
 			if (file == null) {
@@ -284,7 +286,7 @@ public class MainApplicationController implements Initializable {
 			}
 			loadMemoryCardBlocks(memoryCardTmp, tilePaneTmp);
 			enableMenus(memoryCardSlot);
-			isMemoryCardChanged = false;
+			setMemoryCardChanged(memoryCardTmp, false);
 		}
 	}
 	
@@ -295,7 +297,7 @@ public class MainApplicationController implements Initializable {
 			if (isSaveConfirmationDialogOk()) {
 				try {
 					MemoryCardController.saveInstance(memoryCard, memoryCardFile);
-					isMemoryCardChanged = false;
+					setMemoryCardChanged(memoryCard, false);
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
@@ -541,7 +543,7 @@ public class MainApplicationController implements Initializable {
 		if (memoryCard != null) {
 			MemoryCardController.defrag(memoryCard);
 			loadMemoryCardBlocks(memoryCard, tilePane);
-			isMemoryCardChanged = true;
+			setMemoryCardChanged(memoryCard, true);
 		}
 	}
 	
@@ -586,6 +588,15 @@ public class MainApplicationController implements Initializable {
 	private void toggleDeleteRestoreButtons(boolean isDeleted) {
 		deleteButton.setDisable(isDeleted);
 		restoreButton.setDisable(!isDeleted);		
+	}
+	
+	private void setMemoryCardChanged(MemoryCard memoryCard, boolean status) {
+		if (memoryCard.equals(memoryCard1)) {
+			isMemoryCard1Changed = status;
+		}
+		else if (memoryCard.equals(memoryCard2)) {
+			isMemoryCard2Changed = status;
+		}
 	}
 	
 	public void setStage(Stage stage) {

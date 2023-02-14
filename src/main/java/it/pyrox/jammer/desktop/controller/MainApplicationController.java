@@ -39,7 +39,6 @@ import javafx.scene.layout.TilePane;
 import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
-import javafx.stage.StageStyle;
 import javafx.stage.WindowEvent;
 
 public class MainApplicationController implements Initializable {
@@ -262,28 +261,31 @@ public class MainApplicationController implements Initializable {
 	}
 	
 	private void loadMemoryCard(int memoryCardSlot) {
-		TilePane tilePaneTmp = memoryCardSlot == 1 ? tilePane1 : tilePane2;
-		File file = openFileChooserDialogAndGetFile();
-		if (file == null) {
-			return;
-		}
-		MemoryCard memoryCardTmp = null;
-		try {			
-			memoryCardTmp = MemoryCardController.getInstance(file);
-			// save open memory cards in the controller
-			if (memoryCardSlot == 1) {
-				memoryCard1 = memoryCardTmp;
-				memoryCard1File = file;
+		if (!isMemoryCardChanged || isLoadConfirmationDialogOk()) {
+			TilePane tilePaneTmp = memoryCardSlot == 1 ? tilePane1 : tilePane2;
+			File file = openFileChooserDialogAndGetFile();
+			if (file == null) {
+				return;
 			}
-			else if (memoryCardSlot == 2) {
-				memoryCard2 = memoryCardTmp;
-				memoryCard2File = file;
+			MemoryCard memoryCardTmp = null;
+			try {			
+				memoryCardTmp = MemoryCardController.getInstance(file);
+				// save open memory cards in the controller
+				if (memoryCardSlot == 1) {
+					memoryCard1 = memoryCardTmp;
+					memoryCard1File = file;
+				}
+				else if (memoryCardSlot == 2) {
+					memoryCard2 = memoryCardTmp;
+					memoryCard2File = file;
+				}
+			} catch (Exception e) {
+				e.printStackTrace();
 			}
-		} catch (Exception e) {
-			e.printStackTrace();
+			loadMemoryCardBlocks(memoryCardTmp, tilePaneTmp);
+			enableMenus(memoryCardSlot);
+			isMemoryCardChanged = false;
 		}
-		loadMemoryCardBlocks(memoryCardTmp, tilePaneTmp);
-		enableMenus(memoryCardSlot);
 	}
 	
 	private void saveMemoryCard(int memoryCardSlot) {
@@ -300,6 +302,17 @@ public class MainApplicationController implements Initializable {
 			}
 		}
 	}	
+	
+	private boolean isLoadConfirmationDialogOk() {
+		ResourceBundle bundle = ResourceBundle.getBundle(Constants.LOCALE_FILE, Locale.getDefault());
+		Alert alert = new Alert(AlertType.CONFIRMATION);
+		alert.setTitle(bundle.getString("dialog.confirmation.load.title"));
+		alert.setHeaderText(null);
+		alert.setContentText(bundle.getString("dialog.confirmation.load.content"));
+
+		Optional<ButtonType> result = alert.showAndWait();
+		return result.get() == ButtonType.OK;		
+	}
 	
 	private boolean isSaveConfirmationDialogOk() {
 		ResourceBundle bundle = ResourceBundle.getBundle(Constants.LOCALE_FILE, Locale.getDefault());

@@ -374,6 +374,9 @@ public class MainApplicationController implements Initializable {
 		imagePane.getStyleClass().clear();
 		imagePane.pseudoClassStateChanged(Constants.PSEUDO_CLASS_CHECKED, false);
 		imagePane.setOnMouseClicked(null);
+		ImageView imageView = (ImageView) imagePane.getChildren().get(0);
+		toggleImageOpacity(imageView, false);
+		
 	}
 	
 	private void setBlockImage(TilePane tilePaneTmp, Image image, List<Block> blockList, int index, boolean clickable) {
@@ -382,8 +385,8 @@ public class MainApplicationController implements Initializable {
 		imageView.setImage(image);
 		if (clickable) {
 			Optional<Block> optionalBlock = blockList.stream().filter(e -> index == e.getIndex()).findFirst();		
-			if (optionalBlock.isPresent() && SaveTypeEnum.isDeleted(optionalBlock.get().getSaveType())) {
-				toggleImageOpacity(imageView, true);
+			if (optionalBlock.isPresent()) {
+				toggleImageOpacity(imageView, SaveTypeEnum.isDeleted(optionalBlock.get().getSaveType()));
 			}
 			imagePane.getStyleClass().add("selected");			
 			imagePane.setOnMouseClicked(event -> {

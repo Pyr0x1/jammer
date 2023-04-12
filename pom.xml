@@ -5,7 +5,7 @@
 
 	<groupId>it.pyrox</groupId>
 	<artifactId>jammer</artifactId>
-	<version>0.6.1</version>
+	<version>0.6.2</version>
 	<packaging>jar</packaging>
 
 	<name>jammer</name>
@@ -13,8 +13,7 @@
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<java.version>11</java.version>
-		<junit.version>5.1.0</junit.version>
-		<icu4j.version>70.1</icu4j.version>
+		<junit.version>5.1.0</junit.version>		
 		<javafx.version>17</javafx.version>
 		<javafx.maven.plugin.version>0.0.8</javafx.maven.plugin.version>
 		<javafx.main>it.pyrox.jammer.desktop.MainApplication</javafx.main>
@@ -27,12 +26,7 @@
 			<artifactId>junit-jupiter-engine</artifactId>
 			<version>${junit.version}</version>
 			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>com.ibm.icu</groupId>
-			<artifactId>icu4j</artifactId>
-			<version>${icu4j.version}</version>
-		</dependency>
+		</dependency>		
 		<dependency>
 			<groupId>org.openjfx</groupId>
 			<artifactId>javafx-controls</artifactId>

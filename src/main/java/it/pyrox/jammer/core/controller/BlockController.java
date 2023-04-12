@@ -6,8 +6,7 @@ import java.awt.image.ColorModel;
 import java.awt.image.WritableRaster;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
-
-import com.ibm.icu.text.Transliterator;
+import java.text.Normalizer;
 
 import it.pyrox.jammer.core.enums.RegionEnum;
 import it.pyrox.jammer.core.enums.SaveTypeEnum;
@@ -96,8 +95,8 @@ public class BlockController {
 		if (titleString.indexOf(0) != -1) {
 			titleString = titleString.substring(0, titleString.indexOf(0) + 1);			
 		}
-		Transliterator transliterator = Transliterator.getInstance("Fullwidth-Halfwidth");
-		titleString = transliterator.transliterate(titleString);
+		// Converts full-width characters to half-width
+		titleString = Normalizer.normalize(titleString, Normalizer.Form.NFKC);
 		if (titleString.length() < Constants.TITLE_SIZE) {
 			// Right pad the string with spaces so it is of fixed length
 			StringBuilder stringBuilder = new StringBuilder();

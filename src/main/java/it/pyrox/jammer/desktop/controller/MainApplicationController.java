@@ -203,6 +203,8 @@ public class MainApplicationController implements Initializable {
 				setMemoryCardChanged(destinationMemoryCard, true);
 			} catch (NotEnoughSpaceException e) {
 				showNotEnoughSpaceErrorDialog();
+			} catch (NullPointerException e) {
+				showMemoryCardNotLoadedErrorDialog();
 			}
 		}
 	}
@@ -217,6 +219,8 @@ public class MainApplicationController implements Initializable {
 				setMemoryCardChanged(selectedMemoryCard, true);
 			} catch (NotEnoughSpaceException e) {
 				showNotEnoughSpaceErrorDialog();
+			} catch (NullPointerException e) {
+				showMemoryCardNotLoadedErrorDialog();
 			}
 		}
 	}
@@ -376,6 +380,16 @@ public class MainApplicationController implements Initializable {
 		alert.setTitle(bundle.getString("dialog.error.title"));
 		alert.setHeaderText(bundle.getString("dialog.error.no.space.header"));
 		alert.setContentText(bundle.getString("dialog.error.no.space.content"));
+
+		alert.showAndWait();
+	}
+	
+	public void showMemoryCardNotLoadedErrorDialog() {
+		ResourceBundle bundle = ResourceBundle.getBundle(Constants.LOCALE_FILE, Locale.getDefault());
+		Alert alert = new Alert(AlertType.ERROR);
+		alert.setTitle(bundle.getString("dialog.error.title"));
+		alert.setHeaderText(bundle.getString("dialog.error.no.memory.card.header"));
+		alert.setContentText(bundle.getString("dialog.error.no.memory.card.content"));
 
 		alert.showAndWait();
 	}

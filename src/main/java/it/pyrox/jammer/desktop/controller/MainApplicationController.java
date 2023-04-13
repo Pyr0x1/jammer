@@ -200,7 +200,7 @@ public class MainApplicationController implements Initializable {
 			try {
 				MemoryCardController.copyLinkedBlocks(selectedMemoryCard, destinationMemoryCard, selectedBlocks.get(0).getIndex());
 				loadMemoryCardBlocks(destinationMemoryCard, destinationMemoryCard.equals(memoryCard1) ? tilePane1 : tilePane2);
-				setMemoryCardChanged(selectedMemoryCard, true);
+				setMemoryCardChanged(destinationMemoryCard, true);
 			} catch (NotEnoughSpaceException e) {
 				showNotEnoughSpaceErrorDialog();
 			}
@@ -330,9 +330,21 @@ public class MainApplicationController implements Initializable {
 	private boolean isExitConfirmationDialogWithChangesOk() {
 		ResourceBundle bundle = ResourceBundle.getBundle(Constants.LOCALE_FILE, Locale.getDefault());
 		Alert alert = new Alert(AlertType.CONFIRMATION);
+		
 		alert.setTitle(bundle.getString("dialog.confirmation.exit.title"));
 		alert.setHeaderText(null);
-		alert.setContentText(bundle.getString("dialog.confirmation.exit.content"));
+		
+		String contentText = null;
+		if (isMemoryCard1Changed && isMemoryCard2Changed) {
+			contentText = "dialog.confirmation.exit.content.both.slots";
+		}
+		else if (isMemoryCard1Changed) {
+			contentText = "dialog.confirmation.exit.content.slot.1";
+		}
+		else if (isMemoryCard2Changed) {
+			contentText = "dialog.confirmation.exit.content.slot.2";
+		}
+		alert.setContentText(bundle.getString(contentText));
 
 		Optional<ButtonType> result = alert.showAndWait();
 		return result.get() == ButtonType.OK;

@@ -312,6 +312,8 @@ public class MainApplicationController implements Initializable {
 	private boolean isLoadConfirmationDialogOk() {
 		ResourceBundle bundle = ResourceBundle.getBundle(Constants.LOCALE_FILE, Locale.getDefault());
 		Alert alert = new Alert(AlertType.CONFIRMATION);
+		
+		alert.initOwner(stage);
 		alert.setTitle(bundle.getString("dialog.confirmation.load.title"));
 		alert.setHeaderText(null);
 		alert.setContentText(bundle.getString("dialog.confirmation.load.content"));
@@ -323,6 +325,8 @@ public class MainApplicationController implements Initializable {
 	private boolean isSaveConfirmationDialogOk() {
 		ResourceBundle bundle = ResourceBundle.getBundle(Constants.LOCALE_FILE, Locale.getDefault());
 		Alert alert = new Alert(AlertType.CONFIRMATION);
+		
+		alert.initOwner(stage);
 		alert.setTitle(bundle.getString("dialog.confirmation.save.title"));
 		alert.setHeaderText(null);
 		alert.setContentText(bundle.getString("dialog.confirmation.save.content"));
@@ -335,6 +339,7 @@ public class MainApplicationController implements Initializable {
 		ResourceBundle bundle = ResourceBundle.getBundle(Constants.LOCALE_FILE, Locale.getDefault());
 		Alert alert = new Alert(AlertType.CONFIRMATION);
 		
+		alert.initOwner(stage);
 		alert.setTitle(bundle.getString("dialog.confirmation.exit.title"));
 		alert.setHeaderText(null);
 		
@@ -357,6 +362,8 @@ public class MainApplicationController implements Initializable {
 	private boolean isFormatConfirmationDialogOk() {
 		ResourceBundle bundle = ResourceBundle.getBundle(Constants.LOCALE_FILE, Locale.getDefault());
 		Alert alert = new Alert(AlertType.CONFIRMATION);
+		
+		alert.initOwner(stage);
 		alert.setTitle(bundle.getString("dialog.confirmation.format.title"));
 		alert.setHeaderText(null);
 		alert.setContentText(bundle.getString("dialog.confirmation.format.content"));
@@ -367,7 +374,9 @@ public class MainApplicationController implements Initializable {
 	
 	public void showAboutDialog() {
 		ResourceBundle bundle = ResourceBundle.getBundle(Constants.LOCALE_FILE, Locale.getDefault());
-		Alert alert = new Alert(AlertType.INFORMATION);		
+		Alert alert = new Alert(AlertType.INFORMATION);
+		
+		alert.initOwner(stage);
 		alert.setTitle(bundle.getString("dialog.about.title"));
 		alert.setHeaderText(bundle.getString("app.name"));
 		alert.setContentText(bundle.getString("dialog.about.content"));
@@ -377,6 +386,8 @@ public class MainApplicationController implements Initializable {
 	public void showNotEnoughSpaceErrorDialog() {
 		ResourceBundle bundle = ResourceBundle.getBundle(Constants.LOCALE_FILE, Locale.getDefault());
 		Alert alert = new Alert(AlertType.ERROR);
+		
+		alert.initOwner(stage);
 		alert.setTitle(bundle.getString("dialog.error.title"));
 		alert.setHeaderText(bundle.getString("dialog.error.no.space.header"));
 		alert.setContentText(bundle.getString("dialog.error.no.space.content"));
@@ -387,6 +398,8 @@ public class MainApplicationController implements Initializable {
 	public void showMemoryCardNotLoadedErrorDialog() {
 		ResourceBundle bundle = ResourceBundle.getBundle(Constants.LOCALE_FILE, Locale.getDefault());
 		Alert alert = new Alert(AlertType.ERROR);
+		
+		alert.initOwner(stage);
 		alert.setTitle(bundle.getString("dialog.error.title"));
 		alert.setHeaderText(bundle.getString("dialog.error.no.memory.card.header"));
 		alert.setContentText(bundle.getString("dialog.error.no.memory.card.content"));

@@ -2,7 +2,7 @@
 # jammer (JAva Memory card ManagER)
 Jammer is a PS1 memory card manager written in Java. 
 
-![immagine](https://user-images.githubusercontent.com/4041081/202224926-a029309d-c3c2-4718-a4f0-65c1d6e6089f.png)
+![immagine](https://user-images.githubusercontent.com/4041081/232223393-029223cd-2861-4943-ae54-e97b3c769539.PNG)
 
 ### Requirements:
 * Java 11

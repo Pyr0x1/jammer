@@ -139,7 +139,7 @@ public class MemoryCardController {
 					tmpContiguousEmptyBlocksSize++;
 				}
 				if (!SaveTypeEnum.FORMATTED.equals(block.getSaveType()) || currentIndex == Constants.NUM_BLOCKS - 1) {
-					if (tmpContiguousEmptyBlocksSize >= neededBlocksSize && tmpContiguousEmptyBlocksSize < minContiguousEmptyBlocksSize) {
+					if (tmpContiguousEmptyBlocksSize >= neededBlocksSize && ((tmpContiguousEmptyBlocksSize < minContiguousEmptyBlocksSize) || tmpContiguousEmptyBlocksSize == Constants.NUM_BLOCKS)) {
 						minContiguousEmptyBlocksFirstIndex = tmpContiguousEmptyBlocksFirstIndex;
 						minContiguousEmptyBlocksSize = tmpContiguousEmptyBlocksSize;
 					}

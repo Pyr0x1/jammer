@@ -716,6 +716,28 @@ public class MemoryCardControllerTest {
 	}
 	
 	@Test
+	public void testCopyBlocksWithSingleSlotAndDestinationMemoryCardFormatted() throws IOException, NotEnoughSpaceException {
+		File inputFileSource = new File(getClass().getClassLoader().getResource("Memorycard1.mcr").getFile());
+		MemoryCard memoryCardSource = MemoryCardController.getInstance(inputFileSource);			
+		System.out.println("Before MC1:");
+		System.out.println(memoryCardSource);			               
+		assertNotNull(memoryCardSource);
+		assertNotNull(memoryCardSource.getBlocks());		
+		File inputFileDest = new File(getClass().getClassLoader().getResource("Memorycard_formatted.mcr").getFile());
+		MemoryCard memoryCardDest = MemoryCardController.getInstance(inputFileDest);			
+		System.out.println("Before MC2:");
+		System.out.println(memoryCardDest);			               
+		assertNotNull(memoryCardDest);
+		assertNotNull(memoryCardDest.getBlocks());
+		MemoryCardController.copyLinkedBlocks(memoryCardSource, memoryCardDest, 0);
+		System.out.println("After MC2:");
+		System.out.println(memoryCardDest);
+		assertDeepCopiedBlockIsOkNoIndices(memoryCardSource.getBlockAt(0), memoryCardDest.getBlockAt(0));				
+		assertEquals(1, memoryCardDest.getBlockAt(1).getIndex());		
+		assertEquals(255, memoryCardDest.getBlockAt(1).getNextLinkIndex());		
+	}
+	
+	@Test
 	public void testCopyAllBlocksIfNoEmptyTargetCardThenException() throws IOException {
 		File inputFileSource = new File(getClass().getClassLoader().getResource("Memorycard3.mcr").getFile());
 		MemoryCard memoryCardSource = MemoryCardController.getInstance(inputFileSource);		

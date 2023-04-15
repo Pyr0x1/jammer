@@ -9,6 +9,7 @@ import it.pyrox.jammer.desktop.util.Constants;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
+import javafx.scene.image.Image;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
@@ -37,6 +38,7 @@ public class MainApplication extends Application {
 	
 	private void setStageProperties(Stage primaryStage) {
 		primaryStage.setTitle(Constants.TITLE);
+		primaryStage.getIcons().add(new Image("icon.png"));
 		primaryStage.setResizable(false);
 	}
 }

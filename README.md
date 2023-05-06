@@ -1,5 +1,5 @@
 
-# jammer (JAva Memory card ManagER)
+# jammer (JAva Memory card ManagER) [![workflow](https://github.com/Pyr0x1/jammer/actions/workflows/maven.yml/badge.svg)](https://github.com/Pyr0x1/jammer/actions/workflows/maven.yml) [![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
 Jammer is a PS1 memory card manager written in Java. 
 
 ![immagine](https://user-images.githubusercontent.com/4041081/232223393-029223cd-2861-4943-ae54-e97b3c769539.PNG)

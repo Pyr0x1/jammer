@@ -13,3 +13,5 @@ Jammer is a PS1 memory card manager written in Java.
 * Localization support (only english and italian at the moment)
 * Unique features, such as memory card defragmentation
 * Currently supporting only .mcr files from ePSXe
+### Credits:
+[memcardrex from ShendoXT](https://github.com/ShendoXT/memcardrex)
